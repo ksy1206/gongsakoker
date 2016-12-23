@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="estimate">
+    
+    <select id="selectAllList" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+       SELECT 
+			a.est_no, a.member_no, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		WHERE
+			b.estType01_code = #{estType01_code}
+			<if test="est_state != '' and est_state != null">
+			and a.est_state = #{est_state}
+			</if>
+		ORDER BY est_no DESC
+    </select>
+	
+    <select id="MaxEst_no" resultType="String">
+        SELECT MAX(est_no) FROM koker_estimate
+    </select>
+    
+    <insert id="insertEstimate" parameterType="gongsakoker.vo.EstimateVO">
+        INSERT INTO
+        	koker_estimate
+        		(
+					member_no
+					, est_sido
+					, est_gugun
+					, est_area
+					, est_startDate
+					, est_endDate
+					, est_cost
+					, est_content
+					, est_img01
+					, est_img02
+					, est_img03
+					, est_imgPath
+					, est_agreement
+					, est_state
+					, setEst_no
+        		)
+        VALUES
+        		(
+        			#{member_no}
+					, #{est_sido}
+					, #{est_gugun}
+					, #{est_area}
+					, #{est_startDate}
+					, #{est_endDate}
+					, #{est_cost}
+					, #{est_content}
+					, #{est_img01}
+					, #{est_img02}
+					, #{est_img03}
+					, #{est_imgPath}
+					, #{est_agreement}
+					, 'n'
+					, 0
+        		)
+    </insert>
+    
+    <insert id="insertEstimate_field" parameterType="gongsakoker.vo.EstimateVO">
+        INSERT INTO
+        	koker_estimate_field
+        		(
+        			est_no
+        			, estType01_code
+        			, estType02_code
+        			<if test="field01 != null and field01 != '' ">
+        			, field01
+        			</if>
+        			<if test="field02 != null and field02 != '' ">
+        			, field02
+        			</if>
+        			<if test="field03 != null and field03 != '' ">
+        			, field03
+        			</if>
+        			<if test="field04 != null and field04 != '' ">
+        			, field04
+        			</if>
+        			<if test="field05 != null and field05 != '' ">
+        			, field05
+        			</if>
+        			<if test="field06 != null and field06 != '' ">
+        			, field06
+        			</if>
+        			<if test="field07 != null and field07 != '' ">
+        			, field07
+        			</if>
+        			<if test="field08 != null and field08 != '' ">
+        			, field08
+        			</if>
+        			<if test="field09 != null and field09 != '' ">
+        			, field09
+        			</if>
+        			<if test="field10 != null and field10 != '' ">
+        			, field10
+        			</if>
+        			<if test="field11 != null and field11 != '' ">
+        			, field11
+        			</if>
+        		)
+        	VALUES
+        		(
+        			#{est_no}
+        			, #{estType01_code}
+        			, #{estType02_code}
+        			<if test="field01 != null and field01 != '' ">
+        			, #{field01}
+        			</if>
+        			<if test="field02 != null and field02 != '' ">
+        			, #{field02}
+        			</if>
+        			<if test="field03 != null and field03 != '' ">
+        			, #{field03}
+        			</if>
+        			<if test="field04 != null and field04 != '' ">
+        			, #{field04}
+        			</if>
+        			<if test="field05 != null and field05 != '' ">
+        			, #{field05}
+        			</if>
+        			<if test="field06 != null and field06 != '' ">
+        			, #{field06}
+        			</if>
+        			<if test="field07 != null and field07 != '' ">
+        			, #{field07}
+        			</if>
+        			<if test="field08 != null and field08 != '' ">
+        			, #{field08}
+        			</if>
+        			<if test="field09 != null and field09 != '' ">
+        			, #{field09}
+        			</if>
+        			<if test="field10 != null and field10 != '' ">
+        			, #{field10}
+        			</if>
+        			<if test="field11 != null and field11 != '' ">
+        			, #{field11}
+        			</if>
+
+        		)
+    </insert>
+
+	
+	<select id="getSearchList" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*검색 리스트*/
+			SELECT 
+			 i.koker_no
+			,i.koker_name
+			,i.class_code
+			,i.logo_path
+			,i.logo_name
+			,i.koker_title
+			,i.addr01
+			,i.addr02
+			,i.call_tel01
+			,i.call_tel02
+			,i.call_tel03
+			,i.koker_auth
+			,(SELECT 
+				COUNT(*) 
+			FROM 
+				koker_review 
+			WHERE 
+				koker_no = i.koker_no 
+			GROUP BY 
+				koker_no) AS review_count
+			,(SELECT 
+				ROUND(AVG(review),1) 
+			FROM 
+				koker_review 
+			WHERE 
+				koker_no = i.koker_no 
+			GROUP BY 
+				koker_no) AS review_avg
+			,(SELECT 
+				member_id 
+			FROM 
+				koker_member 
+			WHERE 
+				member_no = i.member_no 
+			) AS member_id	
+			, IFNULL(e.ranking, '0') AS ranking
+			, IFNULL(f.state, '0') AS state
+			, IFNULL(h.special_no, '0') AS special_no
+			,IFNULL(b.bookmark_no, '0') AS bookmark_no
+		FROM 
+			koker_info AS i
+	
+		LEFT OUTER JOIN 
+		
+			koker_review AS r
+		ON 
+			i.koker_no = r.koker_no	
+		LEFT OUTER JOIN 
+		
+			koker_code AS c
+		ON 
+			i.class_code = c.class_code		
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					bookmark_no
+					,koker_no
+				FROM
+					 koker_bookmark
+				
+				WHERE 
+					member_no = #{member_no}
+				
+				) b	
+		ON 
+			i.koker_no = b.koker_no	
+		LEFT OUTER JOIN koker_rank e
+				ON i.koker_no = e.koker_no
+				AND i.class_code = e.class_code
+		LEFT OUTER JOIN koker_state f
+				ON i.koker_no = f.koker_no
+		LEFT OUTER JOIN koker_special h
+				ON i.koker_no = h.koker_no	
+		LEFT OUTER JOIN koker_member m
+				ON i.member_no = m.member_no			
+		 WHERE 
+		 	1=1
+		 		AND
+		 			m.use_yn  ='y'
+		 	 	AND
+					m.member_code = '01'
+		 	<if test="flag=='searchList'">
+				AND
+				(
+				i.koker_name LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr01 LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr02 LIKE CONCAT('%',#{search},'%')
+				)
+			</if>
+			<if test="flag=='search'">
+				AND
+				(
+	    		c.class_code = #{class_code}
+	   			AND
+	    		c.category = #{category}
+	    		AND
+	    		i.addr01 LIKE CONCAT('%',#{gugun},'%') 
+	    		AND
+	    		i.addr01 LIKE CONCAT('%',#{sido},'%')
+	    		)
+			</if>
+		GROUP BY
+			i.koker_no	
+		ORDER BY
+		  	i.koker_name
+		  	,i.addr02
+			,i.addr01	
+				
+		</select>
+
+		
+	<select id="getEstType02List" parameterType="map"  resultType="gongsakoker.vo.EstimateVO">
+		/*소분류종류로딩*/
+		SELECT
+			 estType02_no
+			,estType01_code
+			,estType02_code
+			,estType02_name
+			
+		FROM
+			koker_estimate_type02
+		WHERE
+			estType01_code = #{estType01_code}
+		ORDER BY
+			estType02_no ASC			
+	</select>
+	
+	<select id="getMyList" parameterType="map"  resultType="gongsakoker.vo.EstimateVO">
+	    SELECT 
+			a.est_no, a.member_no, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		WHERE
+			a.member_no = #{member_no}
+			AND
+			a.est_state = #{est_state}
+		ORDER BY est_no DESC
+	</select>
+	
+	<select id="getEstimateDetails" parameterType="map"  resultType="gongsakoker.vo.EstimateVO">
+	SELECT 
+		a.est_no, a.member_no, a.est_sido, a.est_gugun
+		, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+		, a.est_content, a.est_img01, a.est_img02, a.est_img03
+		, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+		, b.estType01_code, b.estType02_code
+		, MAX(c.setEst_price) AS max_price
+		, MIN(c.setEst_price) AS min_price
+	FROM
+		koker_estimate AS a
+	LEFT JOIN
+		koker_estimate_field AS b
+		ON a.est_no = b.est_no
+	LEFT JOIN
+		koker_set_estimate AS c
+		ON a.est_no = c.est_no
+	WHERE
+		a.est_no = #{est_no}			
+	</select>
+	
+	<select id="getKokor_info" parameterType="map" resultType="map">
+	    SELECT
+	    	koker_no, koker_name
+	    FROM
+	    	koker_info
+	    WHERE
+	    	member_no=#{member_no}
+	</select>
+	
+	<insert id="insertSetEstimate" parameterType="gongsakoker.vo.EstimateVO">
+	    INSERT INTO
+	    	koker_set_estimate
+	    		(
+	    			est_no
+	    			, setEst_price
+	    			, setEst_content
+	    			, setEst_insertDate
+	    			, koker_name
+	    			, koker_no
+	    		)
+		    VALUES
+		    	(
+		    		#{est_no}
+		    		, #{setEst_price}
+		    		, #{setEst_content}
+		    		, #{setEst_insertDate}
+		    		, #{koker_name}
+		    		, #{koker_no}
+		    	)	    	
+	</insert>
+	
+	<select id="setEstimateList" parameterType="map"  resultType="gongsakoker.vo.EstimateVO">
+		SELECT
+			setEst_no
+			, est_no
+			, setEst_price
+			, setEst_content
+			, setEst_insertDate
+			, koker_name
+			, koker_no
+		FROM
+			koker_set_estimate
+		WHERE
+			est_no=#{est_no}
+	</select>
+	
+	<update id="insertSetEst_no" parameterType="map">
+	    UPDATE
+	    	koker_estimate
+	    SET
+	    	setEst_no = #{setEst_no}
+	    	, est_state = 'y'
+	    WHERE
+	    	est_no = #{est_no}	    	
+	</update>
+	
+	<select id="checkSetEstimate" parameterType="map" resultType="map">
+	    SELECT
+	    	COUNT(*) AS count_setEst_no
+	    FROM
+	    	koker_set_estimate
+		WHERE
+			koker_no= #{koker_no}
+		AND
+			est_no= #{est_no}
+	</select>
+	
+	<select id="select_setEstimate_koker_no" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+	    SELECT
+			setEst_no
+			, est_no
+			, setEst_price
+			, setEst_content
+			, setEst_insertDate
+			, koker_name
+			, koker_no
+		FROM
+			koker_set_estimate
+		WHERE
+			est_no=#{est_no}
+			and
+			koker_no=#{koker_no}
+	</select>
+	
+	<select id="select_allField" resultType="map">
+	    SELECT
+	    	estimate_field_no
+	    	, estimate_field_code
+	    	, estimate_field_name
+	    FROM
+	    	estimate_field
+	</select>
+	
+	<select id="select_YandNField" parameterType="map" resultType="map">
+	 	SELECT
+		CASE WHEN X=1 THEN 'field01'
+		    WHEN X=2 THEN 'field02'
+		    WHEN X=3 THEN 'field03'
+		    WHEN X=4 THEN 'field04'
+		    WHEN X=5 THEN 'field05'
+		    WHEN X=6 THEN 'field06'
+		    WHEN X=7 THEN 'field07'
+		    WHEN X=8 THEN 'field08'
+		    WHEN X=9 THEN 'field09'
+		    WHEN X=10 THEN 'field10'
+		    WHEN X=11 THEN 'field11'
+		    WHEN X=12 THEN 'field12'
+		    WHEN X=13 THEN 'field13'
+		    WHEN X=14 THEN 'field14'
+		    WHEN X=15 THEN 'field15'
+		    WHEN X=16 THEN 'field16'
+		    WHEN X=17 THEN 'field17'
+		    WHEN X=18 THEN 'field18'
+		    WHEN X=19 THEN 'field19'
+		    WHEN X=20 THEN 'field20'
+		    WHEN X=21 THEN 'field21'
+		    WHEN X=22 THEN 'field22'
+		    WHEN X=23 THEN 'field23'		    
+		END `field`,
+		
+		CASE WHEN X=1 THEN field01
+		    WHEN X=2 THEN field02
+		    WHEN X=3 THEN field03
+		    WHEN X=4 THEN field04
+		    WHEN X=5 THEN field05
+		    WHEN X=6 THEN field06
+		    WHEN X=7 THEN field07
+		    WHEN X=8 THEN field08
+		    WHEN X=9 THEN field09
+		    WHEN X=10 THEN field10
+		    WHEN X=11 THEN field11
+		    WHEN X=12 THEN field12
+		    WHEN X=13 THEN field13
+		    WHEN X=14 THEN field14
+		    WHEN X=15 THEN field15
+		    WHEN X=16 THEN field16
+		    WHEN X=17 THEN field17
+		    WHEN X=18 THEN field18
+		    WHEN X=19 THEN field19
+		    WHEN X=20 THEN field20
+		    WHEN X=21 THEN field21
+		    WHEN X=22 THEN field22
+		    WHEN X=23 THEN field23		 
+		END `value`
+		
+
+		FROM (
+		  SELECT * FROM koker_estimate_field a,
+		  (
+		  SELECT 1 AS X
+		  UNION ALL SELECT 2 AS X
+		  UNION ALL SELECT 3 AS X
+		  UNION ALL SELECT 4 AS X
+		  UNION ALL SELECT 5 AS X
+		  UNION ALL SELECT 6 AS X
+		  UNION ALL SELECT 7 AS X
+		  UNION ALL SELECT 8 AS X
+		  UNION ALL SELECT 9 AS X
+		  UNION ALL SELECT 10 AS X
+		  UNION ALL SELECT 11 AS X
+		  UNION ALL SELECT 12 AS X
+		  UNION ALL SELECT 13 AS X
+		  UNION ALL SELECT 14 AS X
+		  UNION ALL SELECT 15 AS X
+		  UNION ALL SELECT 16 AS X
+		  UNION ALL SELECT 17 AS X
+		  UNION ALL SELECT 18 AS X
+		  UNION ALL SELECT 19 AS X
+		  UNION ALL SELECT 20 AS X
+		  UNION ALL SELECT 21 AS X
+		  UNION ALL SELECT 22 AS X
+		  UNION ALL SELECT 23 AS X
+		
+		) b WHERE  est_no=#{est_no}
+		) a
+	</select>
+	
+	<delete id="delete_setEstimate" parameterType="map">
+	    DELETE FROM
+	    	koker_set_estimate
+	    WHERE
+	    	setEst_no=#{setEst_no}
+	</delete>
+	
+	<delete id="koker_estimate_delete" parameterType="map">
+	    DELETE FROM
+	    	koker_estimate
+	    WHERE
+	    	est_no=#{est_no}
+	</delete>
+	
+	<delete id="koker_estimate_field_delete" parameterType="map">
+	    DELETE FROM
+	    	koker_estimate_field
+	    WHERE
+	    	est_no=#{est_no}
+	</delete>
+	
+	<delete id="koker_set_estimate_delete" parameterType="map">
+	    DELETE FROM
+	    	koker_set_estimate
+	    WHERE
+	    	est_no=#{est_no}
+	</delete>
+	
+	<select id="select_search_list" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+	    SELECT 
+			a.est_no, a.member_no, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		<where>
+		    <if test="estType01_code != '' and estType01_code != null">
+			b.estType01_code = #{estType01_code}
+			</if>
+			<if test="estType02_code != '' and estType02_code != null">
+			and b.estType02_code = #{estType02_code}
+			</if>
+			<if test="est_sido != '' and est_sido != null">
+			and a.est_sido = #{est_sido}
+			</if>
+			<if test="est_gugun != '' and est_gugun != null">
+			and a.est_gugun = #{est_gugun}
+			</if>
+		</where>
+		ORDER BY est_no DESC
+	</select>
+	
+	<select id="getMy_setEstimate_n" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+		SELECT 
+			a.est_no, a.member_no, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		INNER JOIN
+			koker_set_estimate c
+		ON	a.est_no = c.est_no
+		WHERE
+			c.koker_no = #{koker_no}
+			AND	a.est_state = 'n'
+	</select>
+	
+	<select id="getMy_setEstimate_y" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+		SELECT
+			a.est_no, a.member_no, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		INNER JOIN
+			koker_set_estimate c
+		ON	a.est_no = c.est_no
+		WHERE
+			c.koker_no = #{koker_no}
+			AND	a.est_state = 'y'
+			AND a.setEst_no = c.setEst_no
+	</select>
+</mapper>

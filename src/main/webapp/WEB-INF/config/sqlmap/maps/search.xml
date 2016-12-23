@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="search">
+
+
+	
+	<select id="getSearchList" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*검색 리스트*/
+			SELECT 
+			 i.koker_no
+			,i.koker_name
+			,i.class_code
+			,i.logo_path
+			,i.logo_name
+			,i.koker_title
+			,i.addr01
+			,i.addr02
+			,i.call_tel01
+			,i.call_tel02
+			,i.call_tel03
+			,i.koker_auth
+			,z.charge_yn
+			,(SELECT 
+				COUNT(*) 
+			FROM 
+				koker_review 
+			WHERE 
+				koker_no = i.koker_no 
+			GROUP BY 
+				koker_no) AS review_count
+			,(SELECT 
+				ROUND(AVG(review)) 
+			FROM 
+				koker_review 
+			WHERE 
+				koker_no = i.koker_no 
+			GROUP BY 
+				koker_no) AS review_avg
+			,(SELECT 
+				member_id 
+			FROM 
+				koker_member 
+			WHERE 
+				member_no = i.member_no 
+			) AS member_id	
+			, IFNULL(e.ranking, '0') AS ranking
+			, IFNULL(f.state, '0') AS state
+			, IFNULL(h.special_no, '0') AS special_no
+			, IFNULL(b.bookmark_no, '0') AS bookmark_no
+			, biz.vn
+			, i.category
+			, m.insert_date
+		FROM 
+			koker_info AS i
+	
+		LEFT OUTER JOIN 
+		
+			koker_review AS r
+		ON 
+			i.koker_no = r.koker_no	
+		LEFT OUTER JOIN 
+		
+			koker_category AS c
+		ON 
+			i.koker_no = c.koker_no		
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					bookmark_no
+					,koker_no
+				FROM
+					 koker_bookmark
+				
+				WHERE 
+					member_no = #{member_no}
+				
+				) b	
+		ON 
+			i.koker_no = b.koker_no	
+		LEFT OUTER JOIN koker_rank e
+				ON i.koker_no = e.koker_no
+				AND i.class_code = e.class_code
+		LEFT OUTER JOIN koker_state f
+				ON i.koker_no = f.koker_no
+		LEFT OUTER JOIN koker_special h
+				ON i.koker_no = h.koker_no	
+		LEFT OUTER JOIN koker_charge_member z
+				ON e.koker_no = z.koker_no
+		LEFT OUTER JOIN koker_member m
+				ON i.member_no = m.member_no	
+		LEFT OUTER JOIN bizlink biz
+				ON i.koker_no = biz.koker_no							
+		 WHERE 
+		 	1=1
+		 		AND
+		 			i.class_code  !='01'
+		 		AND
+		 			m.use_yn  ='y'
+		 	 	AND
+					m.member_code = '01'
+		 	<if test="flag=='searchList'">
+				AND
+				(
+				i.koker_name LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr01 LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr02 LIKE CONCAT('%',#{search},'%')
+				)
+			</if>
+			<if test="flag=='search'">
+				<if test="class_code != null and class_code != ''">
+					AND
+		    		c.class_code = #{class_code}
+	    		</if>
+	    		<if test="category != null and category != ''">
+		   			AND
+		    		c.ca${category} = 'y'
+	    		</if>
+	    		<if test="gugun != null and gugun != ''">
+		    		AND
+		    		i.addr01 LIKE CONCAT('%',#{gugun},'%') 
+	    		</if>
+	    		<if test="sido != null and sido != ''">
+		    		AND
+		    		i.addr01 LIKE CONCAT('%',#{sido},'%')
+	    		</if>
+			</if>
+			<if test="flag=='web'">
+			<if test="class_code != null and class_code != ''">
+				AND
+		    	 c.class_code = #{class_code}
+	    	</if>	
+	    		AND
+				(
+				i.koker_name LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr01 LIKE CONCAT('%',#{search},'%')
+				OR
+				i.addr02 LIKE CONCAT('%',#{search},'%')
+				)
+			</if>
+			<if test="flag=='web_detail' or flag=='web_order'">
+					
+				<if test="class_code != null and class_code != ''">
+					AND
+		    		c.class_code = #{class_code}
+	    		</if>
+	    		<if test="category != null and category != ''">
+		   			and (${category})
+	    		</if>
+	    		<if test="gugun != null and gugun != ''">
+		    		AND
+		    		i.addr01 LIKE CONCAT('%',#{gugun},'%') 
+	    		</if>
+	    		<if test="sido != null and sido != ''">
+		    		AND
+		    		i.addr01 LIKE CONCAT('%',#{sido},'%')
+	    		</if>
+	    		AND
+					(
+						i.koker_name LIKE CONCAT('%',#{search},'%')
+					OR
+						i.addr01 LIKE CONCAT('%',#{search},'%')
+					OR
+						i.addr02 LIKE CONCAT('%',#{search},'%')
+					)
+			</if>
+		GROUP BY
+			i.koker_no	
+		ORDER BY
+		
+			<if test="order=='review_avg'">
+				review_avg DESC
+				,i.koker_name
+			  	,i.addr02
+				,i.addr01
+			</if>
+			<if test="order=='ranking'">
+				ranking DESC
+				,i.koker_name
+			  	,i.addr02
+				,i.addr01
+			</if>
+			<if test="order=='insert_date'">
+				m.insert_date DESC
+				,i.koker_name
+			  	,i.addr02
+				,i.addr01
+			</if>
+			<if test="order!='review_avg' and order!='ranking' and order!='insert_date'">
+			  	i.koker_name
+			  	,i.addr02
+				,i.addr01
+			</if>
+		</select>
+
+		
+	<select id="getBusinessKindAll" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*업체종류로딩*/
+		SELECT
+			 code_no
+			,class_code
+			,category
+			,code_name
+			,code_sort
+		FROM
+			koker_code
+		ORDER BY 
+			code_sort ASC
+
+	</select>
+	
+	
+</mapper>

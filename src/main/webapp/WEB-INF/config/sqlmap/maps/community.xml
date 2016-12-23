@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="community">
+
+	<select id="c_s_board_list" resultType="gongsakoker.vo.CommunityVO">
+		/* 공지사항 리스트 */
+		SELECT 
+			*
+		FROM
+			koker_c_s_board
+		WHERE 
+			c_s_code = '02' and c_s_use_yn = 'y'
+	</select>
+	
+	<select id="communityList" resultType="gongsakoker.vo.CommunityVO" parameterType="map">
+		/* 한줄게시판 리스트 */
+		SELECT
+			a.cm_no
+			,a.cm_content
+			,a.cm_insert_date
+			,a.member_no
+			,b.member_id
+			,b.name
+			,c.logo_name
+			,c.koker_name
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_recommend WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS recommend_count
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_reply WHERE cm_no = a.cm_no AND reply_use_yn ='y' GROUP BY cm_no), 0) AS reply_count
+		FROM
+			koker_community a
+		INNER JOIN
+			koker_member b
+		ON 
+			a.member_no = b.member_no
+		INNER JOIN
+			koker_info c
+		ON 
+			b.member_no = c.member_no
+		WHERE
+			a.cm_use_yn = 'y'
+		<if test="search_text != '' and search_text != null and search_text != 'null'">
+			and name like CONCAT('%',#{search_text},'%')
+		</if>
+		ORDER BY 
+			a.cm_insert_date DESC
+		Limit ${start},${end}
+	</select>
+	
+	<select id="communityCount" resultType="int" parameterType="map">
+		/* 한줄게시판 총 갯수 */
+		SELECT
+			count(cm_no)
+		FROM
+			koker_community a
+		INNER JOIN
+			koker_member b
+		ON 
+			a.member_no = b.member_no
+		INNER JOIN
+			koker_info c
+		ON 
+			b.member_no = c.member_no
+		WHERE
+			a.cm_use_yn = 'y'
+		<if test='search_text != "" and search_text != null and search_text != "null"'>
+			and b.name like CONCAT('%',#{search_text},'%')
+		</if>
+	</select>
+	
+	<insert id="communityInsert" parameterType="gongsakoker.vo.CommunityVO">
+		/* 한줄게시판 입력 */
+		INSERT INTO 
+			koker_community(cm_content,cm_insert_date,member_no,cm_use_yn)
+		VALUES
+			(
+				#{cm_content} ,now() ,#{member_no} ,'y'
+			)
+	</insert>
+	
+	<select id="communityDetail" parameterType="map" resultType="gongsakoker.vo.CommunityVO">
+		/* 한줄게시판 상세페이지 */
+		SELECT
+			a.cm_no
+			,a.cm_content
+			,a.cm_insert_date
+			,a.member_no
+			,b.member_id
+			,b.name
+			,c.logo_name
+			,c.koker_name
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_recommend WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS recommend_count
+		FROM
+			koker_community a
+			
+		INNER JOIN
+			koker_member b
+		ON a.member_no = b.member_no
+		INNER JOIN
+			koker_info c
+		ON 
+			b.member_no = c.member_no
+		WHERE
+			a.cm_no = #{cm_no}
+		ORDER BY 
+			a.cm_insert_date DESC
+	</select>
+
+	<select id="communityReplyList" parameterType="map" resultType="gongsakoker.vo.CommunityVO">
+		/* 한줄게시판 상세 댓글 리스트*/
+		SELECT 
+			* 
+		FROM 
+			koker_community_reply a
+		INNER JOIN 
+			koker_member b
+		ON a.member_no = b.member_no
+		INNER JOIN
+			koker_info c
+		ON 
+			b.member_no = c.member_no
+		WHERE 
+			a.cm_no = #{cm_no} and a.reply_use_yn='y'
+		ORDER BY 
+			a.reply_insert_date DESC
+		LIMIT ${begin},${end}
+	</select>
+	
+	<select id="communityReplyCount" resultType="int" parameterType="string">
+		/* 한줄게시판 댓글 총 갯수 */
+		SELECT
+			count(cm_no)
+		FROM
+			koker_community_reply
+		WHERE 
+			cm_no = #{cm_no} and reply_use_yn='y'
+	</select>
+	
+	<insert id="communityReplyInsert" parameterType="gongsakoker.vo.CommunityVO">
+		/* 한줄게시판 댓글 입력*/
+		INSERT INTO
+			koker_community_reply(reply_content,reply_insert_date,member_no,reply_use_yn,cm_no)
+		VALUES
+			(
+				#{reply_content} ,now() ,#{member_no} ,'y' ,#{cm_no}
+			)
+	</insert>
+	
+	<update id="communityUpdate1" parameterType="gongsakoker.vo.CommunityVO">
+		/* 커뮤니티 게시글 업데이트 */
+		UPDATE
+			koker_community
+		SET
+			cm_content = #{cm_content}
+		WHERE 
+			cm_no = #{cm_no}
+	</update>
+	
+	<update id="communityUpdate2" parameterType="gongsakoker.vo.CommunityVO">
+		/* 커뮤니티 게시글 사용 안함 */
+		UPDATE
+			koker_community
+		SET
+			cm_use_yn='n'
+		WHERE 
+			cm_no = #{cm_no}
+	</update>
+	
+	<update id="replyUpdate1" parameterType="gongsakoker.vo.CommunityVO">
+		/* 커뮤니티 댓글 업데이트 */
+		UPDATE
+			koker_community_reply
+		SET
+			reply_content = #{reply_content}
+		WHERE 
+			reply_no = #{reply_no}
+	</update>
+	
+	<update id="replyUpdate2" parameterType="gongsakoker.vo.CommunityVO">
+		/* 커뮤니티 댓글 사용안함 */
+		UPDATE
+			koker_community_reply
+		SET
+			reply_use_yn='n'
+		WHERE 
+			reply_no = #{reply_no}
+	</update>
+	
+	<select id="communityMyPage" parameterType="gongsakoker.vo.CommunityVO" resultType="gongsakoker.vo.CommunityVO">
+		/* 커뮤니티 마이페이지 리스트 */
+		SELECT
+			a.cm_no
+			,a.cm_content
+			,a.cm_insert_date
+			,a.member_no
+			,b.member_id
+			,b.name
+			,c.logo_name
+			,c.koker_name
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_recommend WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS recommend_count
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_reply WHERE cm_no = a.cm_no AND reply_use_yn ='y' GROUP BY cm_no), 0) AS reply_count
+		FROM
+			koker_community a
+		INNER JOIN
+			koker_member b
+		ON 
+			a.member_no = b.member_no
+		INNER JOIN
+			koker_info c
+		ON 
+			b.member_no = c.member_no
+		WHERE
+			a.cm_use_yn = 'y' and a.member_no = #{member_no} 
+		ORDER BY 
+			a.cm_insert_date DESC
+	</select>
+	
+	<select id="community_recommend_confirm" parameterType="gongsakoker.vo.CommunityVO" resultType="int">
+		/* 추천 했는지 확인*/
+		SELECT
+			count(*)
+		FROM
+			koker_community_recommend
+		WHERE 
+			member_no = #{member_no} and cm_no = #{cm_no}
+	</select>
+	
+	<insert id="community_recommend_insert" parameterType="gongsakoker.vo.CommunityVO">
+		/* 추천이 없으면 추천값 넣기*/
+		INSERT INTO
+			koker_community_recommend(cm_no,member_no)
+		VALUES
+			(#{cm_no},#{member_no})
+	</insert>
+	
+	<delete id="community_recommend_delete" parameterType="gongsakoker.vo.CommunityVO">
+		/* 추천이 있으면 추천값 지우기*/
+		DELETE FROM
+			koker_community_recommend
+		WHERE cm_no = #{cm_no} and member_no = #{member_no}
+	</delete>
+	
+	<select id="community_recommend_count" parameterType="gongsakoker.vo.CommunityVO" resultType="int">
+		/* 추천 총 갯수*/
+		SELECT 
+			count(*) 
+		from 
+			koker_community_recommend
+		WHERE cm_no = #{cm_no}
+	</select>
+	
+	<insert id="community_report" parameterType="gongsakoker.vo.CommunityVO">
+		INSERT INTO
+			koker_report_community(report_grade,report_content,report_category,report_insert_date,member_no,cm_no,report_use_yn,reply_no)
+		VALUES
+			(
+				#{report_grade},#{report_content},#{report_category},now(),#{member_no},#{cm_no},'y',#{reply_no}
+			)
+	</insert>
+	
+	<select id="community_recommend_member_count" parameterType="map" resultType="int">
+		SELECT 
+			count(*)
+		FROM
+			koker_community_recommend
+		WHERE 
+			cm_no = #{cm_no} and member_no=#{member_no}
+	</select>
+	
+	<select id="get_community_notice_list" resultType="gongsakoker.vo.CommunityVO">
+	    SELECT
+	     	c_s_code
+			, c_s_title
+			, c_s_content
+			, c_s_insert_date
+			, c_s_use_yn
+			, admin_name
+		FROM
+			koker_c_s_board
+		WHERE
+			c_s_code = '02'
+			and
+			c_s_use_yn = 'y'
+		ORDER BY c_s_insert_date DESC
+		LIMIT
+			0, 5
+	</select>
+	
+</mapper>

@@ -1,0 +1,165 @@
+
+.details_mainimg {
+	width:980px;
+	margin:0 auto;
+	overflow:hidden;
+}
+.details_mainimg img {
+	position:relative;
+}
+.details_score_star {
+	margin: .5%;
+}
+.details_score_star img {
+	width:45px;
+}
+.details_top_btn {
+	margin-top:20px;
+}
+.details_top_btn span {
+	font-size:18pt;
+	padding:.5em 2em;
+	border-radius:10px;
+	cursor:pointer;
+}
+.details_top_btn span img {
+	width:20px;
+	margin-right:10px;
+	vertical-align:middle;
+}
+
+.main_container {
+	margin:3% auto;
+	text-align:center;
+	width:980px;
+}
+.details_content_01 {
+	width:100%;
+}
+.details_content_01_list {
+	border:2px solid #29a9c8;
+	border-radius:10px;
+	background-color:#fff;
+	padding:2em 2em;
+}
+.details_content_01_list span {
+	width:15%;
+	padding: .5em 1em;
+	margin: .5em 1em;
+	background-color:#29a9c8;
+	display:inline-block;
+	color:#fff;
+	border-radius:10px;
+	position:relative;
+}
+.details_content_02 {
+	width:100%;
+}
+.details_content_02_list {
+	width:100%;
+	border:2px solid #29a9c8;
+	border-radius:10px;
+	background-color:#fff;
+	color:#636363;
+	padding:1em;
+}
+.details_content_02_list textarea {
+	border:none;
+	width:100%;
+	font-family:"나눔바른고딕";
+	padding:1em .5em;
+}
+.details_information_01 {
+	text-align:left;
+	height:46px;
+}
+.details_information_01 p, .details_information_01 h3 {
+	padding: .5em 1em;
+	vertical-align:middle
+}
+.details_content_03_list {
+	border:2px solid #29a9c8;
+	border-radius:10px;
+	background-color:#fff;
+}
+.details_content_03_list img {
+	margin:2em 1em;
+	display:inline-block;
+}
+.details_content_03_list div {
+	padding: .5em;
+	float:right;
+	width:55%;
+	margin-top:14%;
+}
+.details_content_04_list {
+	width:100%;
+	background-color:#29a9c8;
+	padding: .5em 0;
+	border-radius:10px;
+	cursor:pointer;
+}
+.details_content_04_list a {
+	color:#fff;
+	text-decoration:none;
+	font-size:14pt;
+}
+.details_content_04_list img {
+	width:27px;
+	vertical-align:middle;
+	margin-right:13px;
+}
+
+
+@media only screen and (min-width:320px) and (max-width:374px) {
+	.details_mainimg {width:100%;}
+	.mainImg_rank img{width:100%;}
+	.main_container {margin:0;width:100%;}
+	.details_score_star img {width:40px;}
+	.details_top_btn span {padding: .5em 1em;font-size:13pt;}
+	.details_content_01 {width:100%;margin:0 auto;}
+	.details_content_01_list {padding:.5em;}
+	.details_content_01_list span {width:30%;}
+	.details_content_03_list img {margin:2em 1em;}
+	.details_content_03_list div {padding: 1em;width:100%;float:none;margin-top:0;}
+	.details_content_04_list a {font-size:10pt;}
+}
+@media only screen and (min-width:375px) and (max-width:413px) {
+	.details_mainimg {width:100%;}
+	.mainImg_rank img{width:100%;}
+	.main_container {margin:0;width:100%;}
+	.details_score_star img {width:40px;}
+	.details_top_btn span {padding: .5em 1em;font-size:13pt;}
+	.details_content_01 {width:100%;margin:0 auto;}
+	.details_content_01_list {padding:.5em;}
+	.details_content_01_list span {width:30%;}
+	.details_content_03_list img {margin:2em 1em;}
+	.details_content_03_list div {padding: 1em;width:100%;float:none;margin-top:0;}
+	.details_content_04_list a {font-size:11pt;}
+}	
+@media only screen and (min-width:414px) and (max-width:599px) {
+	.details_mainimg {width:100%;}
+	.mainImg_rank img{width:100%;}
+	.main_container {margin:0;width:100%;}
+	.details_score_star img {width:40px;}
+	.details_top_btn span {padding: .5em 1em;font-size:13pt;}
+	.details_content_01 {width:100%;margin:0 auto;}
+	.details_content_01_list {padding:.5em;}
+	.details_content_01_list span {width:30%;}
+	.details_content_03_list img {margin:2em 1em;}
+	.details_content_03_list div {padding: 1em;width:100%;float:none;margin-top:0;}
+	.details_content_04_list a {font-size:11pt;}
+}	
+@media only screen and (min-width: 600px) and (max-width:768px){
+	.details_mainimg {width:100%;}
+	.mainImg_rank img{width:100%;}
+	.main_container {margin:0;width:100%;}
+	.details_score_star img {width:40px;}
+	.details_top_btn span {padding: .5em 1em;font-size:13pt;}
+	.details_content_01 {width:100%;margin:0 auto;}
+	.details_content_01_list {padding:.5em;}
+	.details_content_01_list span {width:25%;}
+	.details_content_03_list img {margin:2em 1em;}
+	.details_content_03_list div {padding: 1em;width:55%;float:right;margin-top:15%;}
+	.details_content_04_list a {font-size:11pt;}
+}

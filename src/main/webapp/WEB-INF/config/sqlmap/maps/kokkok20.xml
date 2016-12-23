@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kokkok20">
+
+	
+	<insert id="rankingReset">
+		SET @ranking=0;
+	</insert>
+	
+	<select id="getRanking20" parameterType="map" resultType="map">
+<!-- 	    SELECT  -->
+<!-- 			a.koker_no -->
+<!-- 			, a.member_no, m.member_id -->
+<!-- 			, a.koker_name ,a.class_code, a.addr01, a.addr02 -->
+<!-- 			, a.logo_path ,a.logo_name -->
+<!-- 			, a.koker_title ,a.koker_content -->
+<!-- 			, r.average AS review_avg ,r.ranking -->
+<!-- 			, s.special_no -->
+<!-- 			, c.charge_yn -->
+<!-- 			, v.vn -->
+<!-- 			, ( -->
+<!-- 			SELECT -->
+<!-- 				COUNT(*)  -->
+<!-- 			FROM  -->
+<!-- 				koker_review  -->
+<!-- 			WHERE  -->
+<!-- 				koker_no = a.koker_no  -->
+<!-- 			GROUP BY  -->
+<!-- 				koker_no -->
+<!-- 			) AS review_count -->
+<!-- 		FROM -->
+<!-- 			koker_info a -->
+<!-- 		JOIN	koker_rank r -->
+<!-- 			ON a.koker_no = r.koker_no -->
+<!-- 		JOIN	koker_member m -->
+<!-- 			ON a.koker_no = m.member_no -->
+<!-- 		LEFT JOIN	koker_special s -->
+<!-- 			ON a.koker_no = s.koker_no -->
+<!-- 		LEFT JOIN	koker_charge_member c -->
+<!-- 			ON a.koker_no = c.koker_no -->
+<!-- 		LEFT JOIN	bizlink v -->
+<!-- 			ON a.koker_no = v.koker_no -->
+<!-- 		WHERE -->
+<!-- 			r.class_code = #{class_code} -->
+<!-- 		ORDER BY -->
+<!-- 			ranking ASC -->
+		SELECT 
+			a.koker_no
+			, a.member_no, m.member_id
+			, a.koker_name ,a.class_code, a.addr01, a.addr02
+			, a.logo_path ,a.logo_name
+			, a.koker_title ,a.koker_content
+			, r.average AS review_avg ,r.ranking
+			, s.special_no
+			, c.charge_yn
+			, a.koker_auth
+			, a.call_tel01
+			, a.call_tel02
+			, a.call_tel03
+			, IFNULL(b.bookmark_no, '0') AS bookmark_no
+			, (
+			SELECT
+				COUNT(*) 
+			FROM 
+				koker_review 
+			WHERE 
+				koker_no = a.koker_no 
+			GROUP BY 
+				koker_no
+			) AS review_count
+		FROM
+			koker_info a
+		JOIN	koker_rank r
+			ON a.koker_no = r.koker_no
+		JOIN	koker_member m
+			ON a.member_no = m.member_no
+		LEFT JOIN	koker_special s
+			ON a.koker_no = s.koker_no
+		LEFT JOIN	koker_charge_member c
+			ON a.koker_no = c.koker_no
+		LEFT OUTER JOIN 
+		(
+			SELECT 
+				bookmark_no
+				,koker_no
+			FROM
+				 koker_bookmark
+			
+			WHERE 
+				member_no = #{member_no}
+			
+			) b	
+		ON 
+			a.koker_no = b.koker_no	
+		WHERE
+			r.class_code = #{class_code} and a.rank_yn = 'n'
+		ORDER BY
+			ranking ASC
+	</select>
+	
+	
+	<select id="getRanking20_not_use" parameterType="map" resultType="map">
+		SELECT
+			koker_no
+			, member_no
+			, koker_name
+			, class_code
+			, logo_path
+			, logo_name
+			, koker_title
+			, koker_content
+			, review_count
+			, truncate(review_avg, 1) as review_avg
+			, @ranking :=@ranking+1 AS ranking		
+			
+		FROM(
+			SELECT
+				koker_info.koker_no
+				, koker_info.member_no
+				, koker_info.koker_name
+				, koker_info.class_code
+				, koker_info.logo_path
+				, koker_info.logo_name
+				, koker_info.koker_title
+				, koker_info.koker_content
+				, COUNT(*) AS review_count
+				, (SELECT 
+						AVG(review) 
+					FROM 
+						koker_review 
+					WHERE 
+						koker_no = koker_info.koker_no 
+					GROUP BY 
+						koker_review.koker_no) AS review_avg
+		FROM 
+			koker_info
+		RIGHT JOIN 
+			koker_review
+		ON 
+			koker_info.koker_no = koker_review.koker_no
+		WHERE
+			koker_info.class_code=#{class_code} and koker_info.rank_yn = 'n'
+		GROUP BY 
+			koker_no 
+		ORDER BY 
+			review_avg DESC
+		LIMIT 
+			20)AS a
+	
+	</select>
+	
+	<select id="getBusiness_details" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+	SELECT a.koker_no, a.member_no, a.class_code, b.member_id
+         , a.category, a.koker_name, a.zip_code, a.addr01, a.addr02
+         , a.call_tel01, a.call_tel02, a.call_tel03, a.holiday, a.call_stime
+         , a.call_ntime, a.koker_title, a.koker_content, a.koker_url, a.logo_name
+         , a.logo_fake_name, a.logo_path, a.file01_name, a.file01_fake_name
+         , a.file01_path, a.file02_name, a.file02_fake_name, a.file02_path
+         , a.file03_name, a.file03_fake_name, a.file03_path, a.latitude, a.longitude
+         , a.business_file01_name, a.business_file01_path, a.business_file02_name
+         , a.business_file02_path, a.work_state, a.rank_yn
+         , round(IFNULL(d.review_avg, '0')) AS review_avg, IFNULL(d.review_count, '0') AS review_count, e.rank_no, f.state
+         , s.special_no, a.koker_auth, e.ranking, a.latitude, a.longitude
+      FROM koker_info a
+      LEFT JOIN koker_member b
+         ON a.member_no = b.member_no
+      LEFT JOIN 
+         (
+         SELECT koker_no 
+            , truncate(AVG(review), 1) AS review_avg
+            , COUNT(koker_no) AS review_count
+         FROM koker_review
+         GROUP BY koker_no
+         ) d
+         ON a.koker_no = d.koker_no
+      LEFT JOIN koker_rank e
+         ON a.koker_no = e.koker_no
+         AND a.class_code = e.class_code
+      LEFT JOIN koker_state f
+         ON a.koker_no = f.koker_no
+      LEFT JOIN koker_special s
+      	 ON a.koker_no = s.koker_no
+      WHERE 
+      	a.koker_no=#{koker_no}
+	</select>
+	
+	<select id="selectReview" parameterType="map" resultType="gongsakoker.vo.ReviewVO">
+		SELECT
+			*
+		FROM
+			koker_review
+		WHERE
+			koker_no=#{koker_no}
+		ORDER BY
+			insert_date DESC
+		LIMIT
+			3
+	</select>
+
+	<select id="selectReview_All" parameterType="map" resultType="gongsakoker.vo.ReviewVO">
+		SELECT
+			*
+		FROM
+			koker_review
+		WHERE
+			koker_no=#{koker_no}
+		ORDER BY
+			insert_date DESC
+	</select>
+	
+	<select id="selectReviewVo" parameterType="map" resultType="gongsakoker.vo.ReviewVO">
+		SELECT
+			*
+		FROM
+			koker_review
+		WHERE
+			koker_no=#{koker_no}
+			AND
+			member_no=#{member_no}
+	</select>
+	
+	<insert id="insertReview" parameterType="gongsakoker.vo.ReviewVO">
+		INSERT INTO
+			koker_review
+			(
+				koker_no,
+				member_no,
+				member_id,
+				review,
+				comment,
+				insert_date
+			)
+		VALUES
+			(
+				#{koker_no},
+				#{member_no},
+				#{member_id},
+				#{review},
+				#{comment},
+				#{insert_date}
+			)
+	
+	</insert>
+	
+	<update id="updateReview" parameterType="map">
+	UPDATE
+		koker_review
+	SET
+		comment = #{comment},
+		review = #{review}
+	WHERE
+		review_no = #{review_no}
+	</update>
+	
+	<delete id="deleteReview" parameterType="map">
+	DELETE FROM
+		koker_review
+	WHERE
+		review_no = #{review_no}
+	</delete>
+	
+	<select id="selectBookMaker" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+	SELECT
+		*
+	FROM
+		koker_bookmark
+	WHERE
+		koker_no=#{koker_no}	
+	</select>
+	
+	<delete id="deleteBookMaker" parameterType="map">
+	DELETE FROM
+		koker_bookmark
+	WHERE
+		member_no=#{member_no}
+		AND
+		koker_no=#{koker_no}
+	</delete>
+	
+	<insert id="insertBookMaker" parameterType="map">
+	INSERT INTO
+		koker_bookmark
+		(
+			member_no,
+			koker_no
+		)
+	VALUES
+		(
+			#{member_no},
+			#{koker_no}
+		)	
+	</insert>
+	
+	<select id="getClass_code" parameterType="map" resultType="map">
+		SELECT
+		CASE WHEN X=1 THEN '01'
+		    WHEN X=2 THEN '02'
+		    WHEN X=3 THEN '03'
+		    WHEN X=4 THEN '04'
+		    WHEN X=5 THEN '05'
+		    WHEN X=6 THEN '06'
+		    WHEN X=7 THEN '07'
+		    WHEN X=8 THEN '08'
+		    WHEN X=9 THEN '09'
+		    WHEN X=10 THEN '10'
+		    WHEN X=11 THEN '11'
+		    WHEN X=12 THEN '12'
+		    WHEN X=13 THEN '13'
+		    WHEN X=14 THEN '14'
+		    WHEN X=15 THEN '15'
+		    WHEN X=16 THEN '16'
+		    WHEN X=17 THEN '17'
+		    WHEN X=18 THEN '18'
+		    WHEN X=19 THEN '19'
+		    WHEN X=20 THEN '20'
+		    WHEN X=21 THEN '21'
+		    WHEN X=22 THEN '22'
+		    WHEN X=23 THEN '23'
+		    WHEN X=24 THEN '24'
+		    WHEN X=25 THEN '25'
+		    WHEN X=26 THEN '26'
+		    WHEN X=27 THEN '27'
+		    WHEN X=28 THEN '28'
+		    WHEN X=29 THEN '29'
+		    WHEN X=30 THEN '30'
+		    WHEN X=31 THEN '31'
+		    WHEN X=32 THEN '32'
+		    WHEN X=33 THEN '33'
+		    WHEN X=34 THEN '34'
+		    WHEN X=35 THEN '35'
+		    WHEN X=36 THEN '36'
+		    WHEN X=37 THEN '37'
+		    WHEN X=38 THEN '38'
+		    WHEN X=39 THEN '39'
+		    WHEN X=40 THEN '40'
+		END `category`,
+		
+		CASE WHEN X=1 THEN ca01
+		    WHEN X=2 THEN ca02
+		    WHEN X=3 THEN ca03
+		    WHEN X=4 THEN ca04
+		    WHEN X=5 THEN ca05
+		    WHEN X=6 THEN ca06
+		    WHEN X=7 THEN ca07
+		    WHEN X=8 THEN ca08
+		    WHEN X=9 THEN ca09
+		    WHEN X=10 THEN ca10
+		    WHEN X=11 THEN ca11
+		    WHEN X=12 THEN ca12
+		    WHEN X=13 THEN ca13
+		    WHEN X=14 THEN ca14
+		    WHEN X=15 THEN ca15
+		    WHEN X=16 THEN ca16
+		    WHEN X=17 THEN ca17
+		    WHEN X=18 THEN ca18
+		    WHEN X=19 THEN ca19
+		    WHEN X=20 THEN ca20
+		    WHEN X=21 THEN ca21
+		    WHEN X=22 THEN ca22
+		    WHEN X=23 THEN ca23
+		    WHEN X=24 THEN ca24
+		    WHEN X=25 THEN ca25
+		    WHEN X=26 THEN ca26
+		    WHEN X=27 THEN ca27
+		    WHEN X=28 THEN ca28
+		    WHEN X=29 THEN ca29
+		    WHEN X=30 THEN ca30
+		    WHEN X=31 THEN ca31
+		    WHEN X=32 THEN ca32
+		    WHEN X=33 THEN ca33
+		    WHEN X=34 THEN ca34
+		    WHEN X=35 THEN ca35
+		    WHEN X=36 THEN ca36
+		    WHEN X=37 THEN ca37
+		    WHEN X=38 THEN ca38
+		    WHEN X=39 THEN ca39
+		    WHEN X=40 THEN ca40
+		END `value`
+		FROM (
+		  SELECT * FROM koker_category a,
+		  (
+		  SELECT 1 AS X
+		  UNION ALL SELECT 2 AS X
+		  UNION ALL SELECT 3 AS X
+		  UNION ALL SELECT 4 AS X
+		  UNION ALL SELECT 5 AS X
+		  UNION ALL SELECT 6 AS X
+		  UNION ALL SELECT 7 AS X
+		  UNION ALL SELECT 8 AS X
+		  UNION ALL SELECT 9 AS X
+		  UNION ALL SELECT 10 AS X
+		  UNION ALL SELECT 11 AS X
+		  UNION ALL SELECT 12 AS X
+		  UNION ALL SELECT 13 AS X
+		  UNION ALL SELECT 14 AS X
+		  UNION ALL SELECT 15 AS X
+		  UNION ALL SELECT 16 AS X
+		  UNION ALL SELECT 17 AS X
+		  UNION ALL SELECT 18 AS X
+		  UNION ALL SELECT 19 AS X
+		  UNION ALL SELECT 20 AS X
+		  UNION ALL SELECT 21 AS X
+		  UNION ALL SELECT 22 AS X
+		  UNION ALL SELECT 23 AS X
+		  UNION ALL SELECT 24 AS X
+		  UNION ALL SELECT 25 AS X
+		  UNION ALL SELECT 26 AS X
+		  UNION ALL SELECT 27 AS X
+		  UNION ALL SELECT 28 AS X
+		  UNION ALL SELECT 29 AS X
+		  UNION ALL SELECT 30 AS X
+		  UNION ALL SELECT 31 AS X
+		  UNION ALL SELECT 32 AS X
+		  UNION ALL SELECT 33 AS X
+		  UNION ALL SELECT 34 AS X
+		  UNION ALL SELECT 35 AS X
+		  UNION ALL SELECT 36 AS X
+		  UNION ALL SELECT 37 AS X
+		  UNION ALL SELECT 38 AS X
+		  UNION ALL SELECT 39 AS X
+		  UNION ALL SELECT 40 AS X
+		) b WHERE  koker_no=#{koker_no}
+		) a
+	</select>
+	
+	<select id="getListClass_code" parameterType="map" resultType="gongsakoker.vo.CodeVO">
+	SELECT
+		*
+	FROM
+		koker_code
+	WHERE
+		class_code = #{class_code}
+	</select>
+	
+	<select id="selectCategory" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+	SELECT
+		ca01, ca02, ca03, ca04
+		, ca05, ca06, ca07, ca08
+		, ca09, ca10, ca11, ca12
+		, ca13, ca14, ca15, ca16
+		, ca17, ca18, ca19, ca20
+		, ca21, ca22, ca23, ca24
+		, ca25, ca26, ca27, ca28
+		, ca29, ca30, ca31, ca32
+		, ca33, ca34, ca35, ca36
+		, ca37, ca38, ca39, ca40
+	FROM
+		koker_category
+	WHERE
+		koker_no=#{koker_no}	
+	    
+	</select>
+
+	<!-- 핸드폰 질문 등록번호조회 qa - 박종현 -->
+	<select id="get_qhq_reg_id" parameterType="String" resultType="String">	
+		SELECT DISTINCT 
+			hp_reg_id 
+		FROM 
+			koker_member km, koker_info ki 
+		WHERE 
+			km.`member_no` = ki.`member_no` 
+			AND 
+			ki.`koker_no` = #{koker_no} 
+			AND 
+			hp_reg_id IS NOT NULL 
+			AND 
+			push_yn = "Y"
+			AND
+            use_yn = 'y'
+			
+	</select>
+	<!-- 핸드폰 질문 등록번호조회 qa 핸드폰 종류 - 박종현 -->
+	<select id="get_qhq_hp_kind" parameterType="String" resultType="String">	
+	    SELECT
+	    	hp_kind 
+	    FROM 
+	    	koker_member km, koker_info ki
+	    WHERE 
+	    	km.`member_no` = ki.`member_no` 
+			AND 
+			ki.`koker_no` = #{koker_no} ;
+	</select>
+	<!-- 핸드폰 답변 등록번호조회 qa - 박종현 -->
+	<select id="get_aha_reg_id" parameterType="String" resultType="String">	
+		SELECT DISTINCT 
+			hp_reg_id 
+		FROM 
+			koker_member km, koker_qa kq 
+		WHERE 
+			km.`member_no` = kq.`member_no` 
+			AND 
+			kq.`qa_no` = #{qa_no}
+			AND 
+			hp_reg_id IS NOT NULL 
+			AND
+			push_yn = "Y"
+			AND
+            use_yn = 'y';
+			
+	</select>
+	<!-- 핸드폰 답변 등록번호조회 qa 핸드폰 종류 - 박종현 -->
+	<select id="get_aha_hp_kind" parameterType="String" resultType="String">	
+	    SELECT
+	    	hp_kind 
+	    FROM 
+	    	koker_member km, koker_qa kq 
+	    WHERE 
+	    	km.`member_no` = kq.`member_no`
+	    	AND 
+			kq.`qa_no` = #{qa_no};
+	</select>
+</mapper>

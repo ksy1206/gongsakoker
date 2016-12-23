@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="qa">
+
+	<insert id="insertQa" parameterType="gongsakoker.vo.QaVO">
+		INSERT INTO
+			koker_qa
+			(
+				qa_name,
+				qa_content,
+				qa_date,
+				qa_delete,
+				qa_answer,
+				qa_question_no,
+				member_no,
+				koker_no			
+			)
+		VALUES
+			(
+				#{qa_name},
+				#{qa_content},
+				#{qa_date},
+				"N",
+				"N",
+				#{qa_question_no},
+				#{member_no},
+				#{koker_no}
+			)	
+	</insert>
+	
+	<insert id="insertQaAnswer" parameterType="gongsakoker.vo.QaVO">
+		INSERT INTO
+			koker_qa
+			(
+				qa_name,
+				qa_content,
+				qa_date,
+				qa_delete,
+				qa_answer,
+				qa_question_no,
+				member_no,
+				koker_no			
+			)
+		VALUES
+			(
+				#{qa_name},
+				#{qa_content},
+				#{qa_date},
+				"N",
+				"Y",
+				#{qa_question_no},
+				#{member_no},
+				#{koker_no}
+			)	
+	</insert>
+
+	<select id="selectQuestionAll" parameterType="map" resultType="gongsakoker.vo.QaVO">
+	SELECT
+         qa_no,
+         qa_name,
+         qa_content,
+         qa_date,
+         qa_delete,
+         qa_answer,
+         qa_question_no,
+         member_no,
+         koker_no,
+         (SELECT IF(qa_question_no=0,qa_no,qa_question_no)) AS chk_question
+      FROM
+         koker_qa
+      WHERE
+         qa_delete="N"
+         AND
+         koker_no=#{koker_no}
+       ORDER BY 
+         chk_question DESC , qa_no ASC
+	
+	</select>
+
+	<update id="update_QaQuestion" parameterType="gongsakoker.vo.QaVO">
+		UPDATE
+			koker_qa
+		SET
+			qa_content = #{qa_content}
+		WHERE
+			qa_no = #{qa_no}
+	</update>
+	
+	<delete id="deleteQa" parameterType="gongsakoker.vo.QaVO">
+		UPDATE
+			koker_qa
+		SET
+			qa_delete="Y"
+		WHERE
+			qa_no = #{qa_no}
+	
+	</delete>
+	
+	<delete id="deleteQaAnswer" parameterType="gongsakoker.vo.QaVO">
+		UPDATE
+			koker_qa
+		SET
+			qa_delete="Y"
+		WHERE
+			qa_question_no = #{qa_no}	
+	</delete>	
+
+</mapper>

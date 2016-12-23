@@ -1,0 +1,320 @@
+
+body {
+	background-color:#ebebeb;
+}
+
+.content {
+	margin-top:30px;
+	width:980px;
+}
+.search_top_btn {
+	width:980px;
+	margin:30px auto;
+	padding-bottom:10px;
+}
+.search_top_btn .search_btn_ul {
+	background-color:#29a9c8;
+	padding: .5em 2em;
+	border-radius:10px;
+	cursor:pointer;
+}
+.search_top_btn .search_btn_ul a {
+	color:#fff;
+}
+.search_top_btn .filter_Btn_01 {
+	background-color:#29a9c8;
+	padding: .5em 2em;
+	border-radius:20px;
+	cursor:pointer;
+	color:#fff;
+	font-weight:bold;
+	font-size:11pt;
+	font-family:"나눔바른고딕";
+}
+.search_top_btn .filter_Btn_01 a {
+	color:#fff;
+}
+
+.koker_recommend_top h4 a {
+	color:#000;
+}
+
+
+.filter-list {
+	display:none;
+	position:absolute;
+	width:100%;
+	left:0;
+	z-index:9;
+}
+.filter_Btn_01:hover .filter-list {
+	display:block;
+}
+.search_top_btn div .filter_btn {
+	background-color:#fff;
+	margin-top:15px;
+}
+
+.search_top_btn_commend {
+	position:relative;
+	right: 0;
+	top:0;
+	width:97px;
+	float:right;
+}
+
+.search_top_btn_commend select {
+	background-color:#29a9c8;
+	text-align:center;
+	line-height:37px;
+	border-radius: 20px;
+	margin-top:-8px;
+	width:97px;
+	position:absolute;
+	color:#fff;
+	padding: .35em .5em;
+	border:1px solid #29a9c8;
+	outline:none;
+	font-size:11pt;
+	font-weight:bold;
+	font-family:"나눔바른고딕";
+}
+
+.koker_recommend {
+	margin-right:8px;
+}
+.search_filter {
+	background-color:#fff;
+	border-top:1px solid #636363;
+	border-bottom:1px solid #636363;
+	font-family:"Nanum Barun Gothic";
+	display:block;
+}
+.search_top_filter_btn:click + .search_filter {
+	display:block;
+}
+.search_filter img {
+	margin:0 20px;
+}
+.search_filter_01 {
+	width:980px;
+	margin:0 auto;
+}
+.search_filter_02 {
+	width:980px;
+	margin:0 auto;
+}
+.search_filter p {
+	padding:20px 0px 0px 20px;
+	margin-bottom:20px;
+	height:30px;
+	border-bottom:2px solid #636363;
+	font-size:12pt;
+	font-family:"Nanum Barun Gothic";
+	font-weight:bold;
+}
+
+/* 필터 활성화 checkbox 디자인 */
+.search_filter_list input:nth-of-type(1):checked ~ label:nth-of-type(1), .search_filter_list > label[for=job1]:hover,
+.search_filter_list input:nth-of-type(2):checked ~ label:nth-of-type(2), .search_filter_list > label[for=job2]:hover,
+.search_filter_list input:nth-of-type(3):checked ~ label:nth-of-type(3), .search_filter_list > label[for=job3]:hover,
+.search_filter_list input:nth-of-type(4):checked ~ label:nth-of-type(4), .search_filter_list > label[for=job4]:hover,
+.search_filter_list input:nth-of-type(5):checked ~ label:nth-of-type(5), .search_filter_list > label[for=job5]:hover,
+.search_filter_list input:nth-of-type(6):checked ~ label:nth-of-type(6), .search_filter_list > label[for=job6]:hover,
+.search_filter_list input:nth-of-type(7):checked ~ label:nth-of-type(7), .search_filter_list > label[for=job7]:hover,
+.search_filter_list input:nth-of-type(8):checked ~ label:nth-of-type(8), .search_filter_list > label[for=job8]:hover,
+.search_filter_list input:nth-of-type(9):checked ~ label:nth-of-type(9), .search_filter_list > label[for=job9]:hover,
+.search_filter_list input:nth-of-type(10):checked ~ label:nth-of-type(10), .search_filter_list > label[for=job10]:hover,
+.search_filter_list input:nth-of-type(11):checked ~ label:nth-of-type(11), .search_filter_list > label[for=job11]:hover,
+.search_filter_list input:nth-of-type(12):checked ~ label:nth-of-type(12), .search_filter_list > label[for=job12]:hover,
+.search_filter_list input:nth-of-type(13):checked ~ label:nth-of-type(13), .search_filter_list > label[for=job13]:hover,
+.search_filter_list input:nth-of-type(14):checked ~ label:nth-of-type(14), .search_filter_list > label[for=job14]:hover,
+.search_filter_list input:nth-of-type(15):checked ~ label:nth-of-type(15), .search_filter_list > label[for=job15]:hover,
+.search_filter_list input:nth-of-type(16):checked ~ label:nth-of-type(16), .search_filter_list > label[for=job16]:hover,
+.search_filter_list input:nth-of-type(17):checked ~ label:nth-of-type(17), .search_filter_list > label[for=job17]:hover,
+.search_filter_list input:nth-of-type(18):checked ~ label:nth-of-type(18), .search_filter_list > label[for=job18]:hover,
+.search_filter_list input:nth-of-type(19):checked ~ label:nth-of-type(19), .search_filter_list > label[for=job19]:hover,
+.search_filter_list input:nth-of-type(20):checked ~ label:nth-of-type(20), .search_filter_list > label[for=job20]:hover,
+.search_filter_list input:nth-of-type(21):checked ~ label:nth-of-type(21), .search_filter_list > label[for=job21]:hover,
+.search_filter_list input:nth-of-type(22):checked ~ label:nth-of-type(22), .search_filter_list > label[for=job22]:hover,
+.search_filter_list input:nth-of-type(23):checked ~ label:nth-of-type(23), .search_filter_list > label[for=job23]:hover,
+.search_filter_list input:nth-of-type(24):checked ~ label:nth-of-type(24), .search_filter_list > label[for=job24]:hover,
+.search_filter_list input:nth-of-type(25):checked ~ label:nth-of-type(25), .search_filter_list > label[for=job25]:hover,
+.search_filter_list input:nth-of-type(26):checked ~ label:nth-of-type(26), .search_filter_list > label[for=job26]:hover,
+.search_filter_list input:nth-of-type(27):checked ~ label:nth-of-type(27), .search_filter_list > label[for=job27]:hover,
+.search_filter_list input:nth-of-type(28):checked ~ label:nth-of-type(28), .search_filter_list > label[for=job28]:hover,
+.search_filter_list input:nth-of-type(29):checked ~ label:nth-of-type(29), .search_filter_list > label[for=job29]:hover,
+.search_filter_list input:nth-of-type(30):checked ~ label:nth-of-type(30), .search_filter_list > label[for=job30]:hover {
+    background-color:#29a9c8;
+    color:#fff;
+    border:#29a9c8 1px solid;
+}
+.search_filter_list input:nth-of-type(1):checked ~ label:nth-of-type(1), .search_filter_list > label[for=location1]:hover,
+.search_filter_list input:nth-of-type(2):checked ~ label:nth-of-type(2), .search_filter_list > label[for=location2]:hover,
+.search_filter_list input:nth-of-type(3):checked ~ label:nth-of-type(3), .search_filter_list > label[for=location3]:hover,
+.search_filter_list input:nth-of-type(4):checked ~ label:nth-of-type(4), .search_filter_list > label[for=location4]:hover,
+.search_filter_list input:nth-of-type(5):checked ~ label:nth-of-type(5), .search_filter_list > label[for=location5]:hover,
+.search_filter_list input:nth-of-type(6):checked ~ label:nth-of-type(6), .search_filter_list > label[for=location6]:hover,
+.search_filter_list input:nth-of-type(7):checked ~ label:nth-of-type(7), .search_filter_list > label[for=location7]:hover,
+.search_filter_list input:nth-of-type(8):checked ~ label:nth-of-type(8), .search_filter_list > label[for=location8]:hover,
+.search_filter_list input:nth-of-type(9):checked ~ label:nth-of-type(9), .search_filter_list > label[for=location9]:hover,
+.search_filter_list input:nth-of-type(10):checked ~ label:nth-of-type(10), .search_filter_list > label[for=location10]:hover,
+.search_filter_list input:nth-of-type(11):checked ~ label:nth-of-type(11), .search_filter_list > label[for=location11]:hover,
+.search_filter_list input:nth-of-type(12):checked ~ label:nth-of-type(12), .search_filter_list > label[for=location12]:hover,
+.search_filter_list input:nth-of-type(13):checked ~ label:nth-of-type(13), .search_filter_list > label[for=location13]:hover,
+.search_filter_list input:nth-of-type(14):checked ~ label:nth-of-type(14), .search_filter_list > label[for=location14]:hover,
+.search_filter_list input:nth-of-type(15):checked ~ label:nth-of-type(15), .search_filter_list > label[for=location15]:hover,
+.search_filter_list input:nth-of-type(16):checked ~ label:nth-of-type(16), .search_filter_list > label[for=location16]:hover,
+.search_filter_list input:nth-of-type(17):checked ~ label:nth-of-type(17), .search_filter_list > label[for=location17]:hover,
+.search_filter_list input:nth-of-type(18):checked ~ label:nth-of-type(18), .search_filter_list > label[for=location18]:hover,
+.search_filter_list input:nth-of-type(19):checked ~ label:nth-of-type(19), .search_filter_list > label[for=location19]:hover,
+.search_filter_list input:nth-of-type(20):checked ~ label:nth-of-type(20), .search_filter_list > label[for=location20]:hover,
+.search_filter_list input:nth-of-type(21):checked ~ label:nth-of-type(21), .search_filter_list > label[for=location21]:hover,
+.search_filter_list input:nth-of-type(22):checked ~ label:nth-of-type(22), .search_filter_list > label[for=location22]:hover,
+.search_filter_list input:nth-of-type(23):checked ~ label:nth-of-type(23), .search_filter_list > label[for=location23]:hover,
+.search_filter_list input:nth-of-type(24):checked ~ label:nth-of-type(24), .search_filter_list > label[for=location24]:hover,
+.search_filter_list input:nth-of-type(25):checked ~ label:nth-of-type(25), .search_filter_list > label[for=location25]:hover,
+.search_filter_list input:nth-of-type(26):checked ~ label:nth-of-type(26), .search_filter_list > label[for=location26]:hover,
+.search_filter_list input:nth-of-type(27):checked ~ label:nth-of-type(27), .search_filter_list > label[for=location27]:hover,
+.search_filter_list input:nth-of-type(28):checked ~ label:nth-of-type(28), .search_filter_list > label[for=location28]:hover,
+.search_filter_list input:nth-of-type(29):checked ~ label:nth-of-type(29), .search_filter_list > label[for=location29]:hover,
+.search_filter_list input:nth-of-type(30):checked ~ label:nth-of-type(30), .search_filter_list > label[for=location30]:hover,
+.search_filter_list input:nth-of-type(31):checked ~ label:nth-of-type(31), .search_filter_list > label[for=location31]:hover,
+.search_filter_list input:nth-of-type(32):checked ~ label:nth-of-type(32), .search_filter_list > label[for=location32]:hover,
+.search_filter_list input:nth-of-type(33):checked ~ label:nth-of-type(33), .search_filter_list > label[for=location33]:hover,
+.search_filter_list input:nth-of-type(34):checked ~ label:nth-of-type(34), .search_filter_list > label[for=location34]:hover,
+.search_filter_list input:nth-of-type(35):checked ~ label:nth-of-type(35), .search_filter_list > label[for=location35]:hover,
+.search_filter_list input:nth-of-type(36):checked ~ label:nth-of-type(36), .search_filter_list > label[for=location36]:hover,
+.search_filter_list input:nth-of-type(37):checked ~ label:nth-of-type(37), .search_filter_list > label[for=location37]:hover,
+.search_filter_list input:nth-of-type(38):checked ~ label:nth-of-type(38), .search_filter_list > label[for=location38]:hover,
+.search_filter_list input:nth-of-type(39):checked ~ label:nth-of-type(39), .search_filter_list > label[for=location39]:hover,
+.search_filter_list input:nth-of-type(40):checked ~ label:nth-of-type(40), .search_filter_list > label[for=location40]:hover,
+.search_filter_list input:nth-of-type(41):checked ~ label:nth-of-type(41), .search_filter_list > label[for=location41]:hover,
+.search_filter_list input:nth-of-type(42):checked ~ label:nth-of-type(42), .search_filter_list > label[for=location42]:hover,
+.search_filter_list input:nth-of-type(43):checked ~ label:nth-of-type(43), .search_filter_list > label[for=location43]:hover,
+.search_filter_list input:nth-of-type(44):checked ~ label:nth-of-type(44), .search_filter_list > label[for=location44]:hover,
+.search_filter_list input:nth-of-type(45):checked ~ label:nth-of-type(45), .search_filter_list > label[for=location45]:hover,
+.search_filter_list input:nth-of-type(46):checked ~ label:nth-of-type(46), .search_filter_list > label[for=location46]:hover,
+.search_filter_list input:nth-of-type(47):checked ~ label:nth-of-type(47), .search_filter_list > label[for=location47]:hover,
+.search_filter_list input:nth-of-type(48):checked ~ label:nth-of-type(48), .search_filter_list > label[for=location48]:hover,
+.search_filter_list input:nth-of-type(49):checked ~ label:nth-of-type(49), .search_filter_list > label[for=location49]:hover,
+.search_filter_list input:nth-of-type(50):checked ~ label:nth-of-type(50), .search_filter_list > label[for=location50]:hover {
+    background-color:#29a9c8;
+    color:#fff;
+    border:#29a9c8 1px solid;
+}
+.search_filter_list input[type=checkbox] {
+	display:none;
+}
+.search_filter_list input[type=radio] {
+	display:none;
+}
+.search_filter_list label {
+	background-color:#fff;
+	color:#636363;
+	border:1px solid #636363;
+	border-radius:10px;
+	cursor:pointer;
+	padding: .5em 1em;
+	margin:5px 3px;
+	display:inline-block;
+	width:122px;
+	text-align:center;
+	font-weight:bold;
+}
+.search_filter_list_01 {
+	margin:20px 0;
+}
+.search_filter_list_01 div {
+	width:80px;
+	text-align:center;
+	color:#636363;
+	cursor:pointer;
+	display:inline-block;
+	font-size:13pt;
+}
+.search_filter_02 .search_filter_list {
+	border-bottom:2px solid #636363;
+	padding-bottom:20px;
+	margin:20px auto;s
+}
+.search_filter_btn {
+	color:#fff;
+	background-color:#29a9c8;
+	padding:1em 2em;
+	width:300px;
+	border-radius:10px;
+	margin:30px auto;
+	text-align:center;
+	cursor:pointer;
+}
+.koker_recommend_bottom {
+	width:98%;
+	margin:22px auto;
+	font-size:9pt;
+}
+
+@media only screen and (min-width:320px) and (max-width:374px) {
+	.content {width:100%;}
+	.search_top_btn {width:100%;}
+	.search_top_btn div .filter_btn {width:100%;}
+	.search_top_btn_commend {right:0;}
+	.search_filter_list {text-align:center;}
+	.search_filter p {padding:5px 0 0 5px;font-size:11pt;}
+	.search_filter img {margin:0 5px;}
+	.search_filter_01 {width:100%;margin:30px 0;}
+	.search_filter_02 {width:100%;}
+	.search_filter_list div {width:121px;font-size:10pt;padding: .5em 1em .8em 1em;}
+	.search_filter_btn {width:100%;padding:1em 0;}
+	.kok_list_none {width:100%;}
+	.kok_list_none img {width:100%;}
+}
+	
+@media only screen and (min-width:375px) and (max-width:413px) {
+	.content {width:100%;}
+	.search_top_btn {width:100%;}
+	.search_top_btn div .filter_btn {width:100%;}
+	.search_top_btn_commend {right:0;}
+	.search_filter_list {text-align:center;}
+	.search_filter p {padding:5px 0 0 5px;font-size:11pt;}
+	.search_filter img {margin:0 5px;}
+	.search_filter_01 {width:100%;margin:30px 0;}
+	.search_filter_list_01 div {width:50%;font-size:13pt;}
+	.search_filter_02 {width:100%;}
+	.search_filter_list div {width:143px;font-size:12pt;}
+	.search_filter_btn {width:100%;padding:1em 0;}
+	.kok_list_none {width:100%;}
+	.kok_list_none img {width:100%;}
+}
+
+@media only screen and (min-width:414px) and (max-width:599px) {
+	.content {width:100%;}
+	.search_top_btn {width:100%;}
+	.search_top_btn div .filter_btn {width:100%;}
+	.search_top_btn_commend {right:0;}
+	.search_filter_list {text-align:center;}
+	.search_filter p {padding:5px 0 0 5px;font-size:11pt;}
+	.search_filter img {margin:0 5px;}
+	.search_filter_01 {width:100%;margin:30px 0;}
+	.search_filter_02 {width:100%;}
+	.search_filter_list div {width:167px;}
+	.search_filter_btn {width:100%;padding:1em 0;}
+	.kok_list_none {width:100%;}
+	.kok_list_none img {width:100%;}
+}
+
+@media only screen and (min-width: 600px) and (max-width:768px){
+	.content {width:100%;}
+	.search_top_btn {width:100%;}
+	.search_top_btn div .filter_btn {width:100%;}
+	.search_top_btn_commend {right:0;}
+	.search_filter p {padding:5px 0 0 5px;font-size:11pt;}
+	.search_filter img {margin:0 5px;}
+	.search_filter_01 {width:100%;margin:30px 0;}
+	.search_filter_02 {width:100%;}
+	.search_filter_list div {width:152px;}
+	.search_filter_btn {width:100%;padding:1em 0;}
+	.kok_list_none {width:100%;}
+	.kok_list_none img {width:60%;}
+}
+	

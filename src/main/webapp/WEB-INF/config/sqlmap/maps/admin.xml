@@ -1,0 +1,1486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin">
+
+	<!-- 관리자 아이디,패스워드 확인 -->
+	<select id="selectAdmin" parameterType="map" resultType="gongsakoker.vo.AdminVO">
+		/* 관리자 아이디 패스워드 확인 */
+		SELECT 
+			admin_id
+			,admin_pw
+			,admin_name
+		FROM 
+			admin_info
+		WHERE
+			admin_id= #{admin_id}
+	</select>
+	
+	<!-- 관리자 게시판 리스트 -->
+	<select id="getNoticeList" parameterType="gongsakoker.vo.NoticeVO" resultType="gongsakoker.vo.NoticeVO">
+		/* 공지사항 리스트 */
+		SELECT
+			notice_no
+			,writer
+			,title
+			,content
+			,insert_date
+			,use_yn
+		FROM
+			koker_notice
+		<where>
+			<if test="use_yn != '' and use_yn != null">
+				use_yn = #{use_yn}
+			</if>
+		</where>
+		ORDER BY 
+			insert_date DESC 
+	</select>
+	
+	<!-- 안드로이드핸드폰등록번호전체조회 -->
+	<select id="getAll_hp_reg_id" resultType="String">
+		SELECT DISTINCT
+			hp_reg_id
+		FROM
+			koker_member
+		WHERE
+			hp_reg_id IS NOT NULL AND push_yn = "Y" AND hp_reg_id != "keyisnull" AND use_yn = 'y' AND hp_reg_id != "" AND hp_kind = "A";
+	</select>
+	
+	<!-- IOS 핸드폰등록번호전체조회 -->
+	<select id="getAll_ios_reg_id" resultType="String">
+		SELECT DISTINCT
+			hp_reg_id
+		FROM
+			koker_member
+		WHERE
+			hp_reg_id IS NOT NULL AND push_yn = "Y" AND hp_reg_id != "keyisnull" AND use_yn = 'y' AND hp_reg_id != "" AND hp_kind = "I";
+	</select>
+	
+	<!-- 핸드폰등록번호한개조회 게시판 번호 -->
+	<select id="get_hp_reg_id" parameterType="String" resultType="String">	
+		SELECT 
+			hp_reg_id 
+		FROM 
+			koker_member km, koker_board kb 
+		WHERE 
+			board_no = #{board_no} AND km.`member_no` = kb.`member_no` AND push_yn = "Y" AND hp_reg_id != "keyisnull" AND use_yn = 'y';
+	</select>
+	
+	<!-- 핸드폰종류조회 게시판 번호 -->
+	<select id="get_hp_kind" parameterType="String" resultType="String">	
+		SELECT 
+			hp_kind 
+		FROM 
+			koker_member km, koker_board kb 
+		WHERE 
+			board_no = #{board_no} AND km.`member_no` = kb.`member_no`;
+	</select>
+	
+	<!-- 관리자 선택한 게시판 불러오기 -->
+	<select id="getNoticeOne" parameterType="int" resultType="gongsakoker.vo.NoticeVO">
+		/*관리자 공지사항 한개*/
+		SELECT
+			notice_no
+			,writer
+			,title
+			,content
+			,insert_date
+			,use_yn
+		FROM
+			koker_notice
+		WHERE
+			notice_no = #{notice_no}
+	</select>
+	
+	<!-- 관리자 게시판 수정 -->
+	<update id="noticeUpdate" parameterType="gongsakoker.vo.NoticeVO">
+		/*관리자 공지사항 수정*/
+		UPDATE 
+			koker_notice 
+		SET 
+			title = #{title} 
+			,content = #{content}
+			,use_yn = #{use_yn} 
+		WHERE
+			notice_no = #{notice_no}
+	</update>
+	
+	<!-- 관리자 게시판 등록 -->
+	<insert id="noticeInsert" parameterType="gongsakoker.vo.NoticeVO">
+		/*관리자 공지사항 입력*/
+		INSERT INTO 
+			koker_notice(writer, title,content,insert_date,use_yn)
+		VALUES
+			(
+				#{writer}
+				,#{title}
+				,#{content}
+				,NOW()
+				,#{use_yn}
+			)
+	</insert>
+	
+	<!-- 회원 리스트  -->
+	<select id="getMemberList" parameterType="gongsakoker.vo.MemberVO" resultType="gongsakoker.vo.MemberVO">
+		/* 회원 리스트 */
+		SELECT 
+			a.member_no
+			,a.member_id
+			,a.member_code
+			,a.use_yn
+			,a.member_id
+			,a.class_code
+			,b.koker_no
+			,b.koker_name
+		FROM
+			koker_member a
+		INNER JOIN 
+			koker_info b ON a.member_no = b.member_no
+		LEFT OUTER JOIN 
+			koker_category c ON b.koker_no = c.koker_no
+		<where>
+			<if test="use_yn != '' and use_yn != null">
+				a.use_yn = #{use_yn}
+			</if>
+			<if test="member_code != '' and member_code != null">
+				and a.member_code = #{member_code}
+			</if>
+			<if test="class_code != '' and class_code != null">
+				and a.class_code = #{class_code}
+			</if>
+			<if test="keyword_01 != '' and keyword_01 != null ">
+				and (a.member_id like CONCAT('%',#{keyword_01}, '%')  or b.koker_name like CONCAT('%',#{keyword_01}, '%') or a.name like CONCAT('%',#{keyword_01}, '%'))
+			</if>
+			<if test="category != '' and category != null ">
+				and c.ca${category} = 'y'
+			</if>
+		</where>
+		ORDER BY 
+			<if test="member_code == 03">
+				delete_date DESC,
+			</if>
+			insert_date DESC
+	</select>
+	
+	<!--  -->
+	<select id="categoryList" resultType="gongsakoker.vo.MemberVO">
+		/*카테고리 리스트*/
+		Select
+			class_code,category,code_name
+		FROM
+			koker_code
+		ORDER BY 
+			code_sort ASC
+	</select>
+	
+	<!-- 회원 한명 정보  -->
+	<select id="getMemberInfo" parameterType="String" resultType="gongsakoker.vo.MemberVO">
+		/*회원 한명 정보*/
+		SELECT 
+			*
+		FROM 
+			koker_member a
+		LEFT OUTER JOIN 
+			koker_info b ON a.member_no = b.member_no
+		LEFT OUTER JOIN 
+			koker_approve c ON b.koker_no = c.koker_no
+		LEFT OUTER JOIN 
+			koker_category d ON b.koker_no = d.koker_no
+		LEFT OUTER JOIN
+			koker_special e ON b.koker_no = e.koker_no
+		WHERE 
+			a.member_no = #{member_no}
+	</select>
+	<select id="getChargeMember" parameterType="String" resultType="gongsakoker.vo.MemberVO">
+		/*유료회원 정보*/
+		SELECT
+			charge_no
+			,koker_no
+			,start_date
+			,end_date
+			,charge_yn
+		FROM
+			koker_charge_member
+		WHERE
+			koker_no = #{koker_no}
+	</select>
+	
+	
+	<!-- 회원 koker_code start-->
+	<select id="classCodeView" parameterType="gongsakoker.vo.MemberVO"  resultType="gongsakoker.vo.MemberVO">
+		/*코드별 코드보기*/
+		select 
+			* 
+		from 
+			koker_code 
+		where 
+			class_code=#{class_code}
+		order by 
+			code_sort ASC
+	</select>
+	<!-- end -->
+	
+	<!-- 회원 정보 업데이트 -->
+	<update id="member_update" parameterType="gongsakoker.vo.MemberVO">
+		/*회원 정보 업데이트*/
+		UPDATE 
+			koker_member a 
+		LEFT OUTER JOIN 
+			koker_info b ON a.member_no=b.member_no
+		LEFT OUTER JOIN 
+			koker_approve c ON b.koker_no=c.koker_no
+		LEFT OUTER JOIN 
+			koker_category d ON b.koker_no=d.koker_no
+		SET
+			a.password=#{password} 
+			,a.name=#{name}
+			,a.class_code=#{class_code}
+			,b.class_code=#{class_code}
+			,d.class_code=#{class_code}
+			,a.use_yn=#{use_yn}
+			,b.koker_auth=#{koker_auth}
+			,a.hp01=#{hp01}
+			,a.hp02=#{hp02}
+			,a.hp03=#{hp03}
+			,b.category = #{category}
+		    ,b.addr01=#{addr01}
+		    ,b.addr02=#{addr02}
+		    ,b.call_tel01=#{call_tel01}
+		    ,b.call_tel02=#{call_tel02}
+		    ,b.call_tel03=#{call_tel03}
+		    ,b.koker_name=#{koker_name}
+		    ,b.latitude=#{latitude}
+		    ,b.longitude=#{longitude} 
+		    ,c.tptb=#{tptb}
+		    ,d.ca01=#{ca01}
+		    ,d.ca02=#{ca02}
+		    ,d.ca03=#{ca03}
+		    ,d.ca04=#{ca04}
+		    ,d.ca05=#{ca05}
+		    ,d.ca06=#{ca06}
+		    ,d.ca07=#{ca07}
+		    ,d.ca08=#{ca08}
+		    ,d.ca09=#{ca09}
+		    ,d.ca10=#{ca10}
+		    ,d.ca11=#{ca11}
+		    ,d.ca12=#{ca12}
+		    ,d.ca13=#{ca13}
+		    ,d.ca14=#{ca14}
+		    ,d.ca15=#{ca15}
+		    ,d.ca16=#{ca16}
+		    ,d.ca17=#{ca17}
+		    ,d.ca18=#{ca18}
+		    ,d.ca19=#{ca19}
+		    ,d.ca20=#{ca20}
+		    ,d.ca21=#{ca21}
+		    ,d.ca22=#{ca22}
+		    ,d.ca23=#{ca23}
+		    ,d.ca24=#{ca24}
+		    ,d.ca25=#{ca25}
+		    ,d.ca26=#{ca26}
+		    ,d.ca27=#{ca27}
+		    ,d.ca28=#{ca28}
+		    ,d.ca29=#{ca29}
+		    ,d.ca30=#{ca30}
+		    ,d.ca31=#{ca31}
+		    ,d.ca32=#{ca32}
+		    ,d.ca33=#{ca33}
+		    ,d.ca34=#{ca34}
+		    ,d.ca35=#{ca35}
+		    ,d.ca36=#{ca36}
+		    ,d.ca37=#{ca37}
+		    ,d.ca38=#{ca38}
+		    ,d.ca39=#{ca39}
+		    ,d.ca40=#{ca40}
+		    ,a.member_code=#{member_code}
+		    <if test="member_code == 03">
+		    	,a.delete_date = now()
+		    </if>
+		    <if test="business_file01_name != null and business_file01_name !='' ">
+				,b.business_file01_name = #{business_file01_name}
+				,b.business_file01_path = #{business_file01_path}
+			</if>
+			<if test="business_file02_name != null and business_file02_name !='' ">
+				,b.business_file02_name = #{business_file02_name}
+				,b.business_file02_path = #{business_file02_path}
+			</if> 
+		WHERE 
+			a.member_no = #{member_no} 
+	</update>
+	
+	<!-- 회원승인 시작 -->
+	<select id="approve_confirm" parameterType="gongsakoker.vo.MemberVO" resultType="int">
+		/*회원 승인 */
+		SELECT 
+			count(*)
+		FROM
+			koker_approve
+		WHERE
+			koker_no = #{koker_no}
+	</select>
+	<update id="approve_update" parameterType="gongsakoker.vo.MemberVO">
+		/*회원 승인 업데이트*/
+		UPDATE
+			koker_approve
+		SET
+			app_content = #{app_content}
+		WHERE
+			koker_no = #{koker_no}
+	</update>
+	<insert id="approve_insert" parameterType="gongsakoker.vo.MemberVO">
+		/*회원 승인 입력*/
+		INSERT INTO
+			koker_approve(approve_date,app_content,tptb,koker_no)
+		VALUES
+			(
+			now()
+			,#{app_content}
+			,#{tptb}
+			,#{koker_no}
+			)
+	</insert>
+	<!-- 회원승인 끝 -->
+	
+	<!-- 유료회원 업데이트 및 입력 시작 -->
+	<update id="chargeUpdate" parameterType="gongsakoker.vo.MemberVO">
+		/*유료회원 업데이트*/
+		UPDATE
+			koker_charge_member
+		SET
+			start_date = #{start_date}
+			,end_date = #{end_date}
+			,charge_yn = #{charge_yn}
+		WHERE
+			koker_no = #{koker_no}
+	</update>
+	<insert id="chargeInsert" parameterType="gongsakoker.vo.MemberVO">
+		/*유료회원 입력*/
+		INSERT INTO
+			koker_charge_member(koker_no,start_date,end_date,charge_yn)
+		VALUES
+			(
+				#{koker_no}
+				,now()
+				,#{end_date}
+				,#{charge_yn}
+			)
+	</insert>
+	
+	<delete id="chargeDelete" parameterType="gongsakoker.vo.MemberVO">
+		/*유료회원 삭제*/
+		Delete From
+			koker_charge_member
+		WHERE
+			koker_no = #{koker_no};
+	</delete>
+	<!-- 유료회원 업데이트 및 입력 끝 -->
+	
+	<!-- 추천업체 등록 시작 -->
+	<select id="admin_special_count" parameterType="gongsakoker.vo.MemberVO" resultType="int">
+		/*추천업체 카운트*/
+		SELECT
+			count(*)
+		FROM
+			koker_special
+		WHERE
+			koker_no = #{koker_no}
+	</select>
+	<insert id="admin_special_insert" parameterType="gongsakoker.vo.MemberVO">
+		/*추천업체 등록*/
+		INSERT INTO
+			koker_special(koker_no)
+		VALUES
+			(#{koker_no})
+	</insert>
+	<delete id="admin_special_delete" parameterType="gongsakoker.vo.MemberVO">
+		/*추천업체 삭제*/
+		DELETE FROM
+			koker_special
+		WHERE
+			koker_no = #{koker_no}
+	</delete>
+	<!-- 추천업체 등록 끝 -->
+	
+	<!-- 코드별로 총 갯수 뽑기 -->
+	<select id="getCodeCount" resultType="gongsakoker.vo.AdminVO">
+		/*코드별 카운트 갯수*/
+		SELECT 
+			'all' AS cntName, COUNT(*) AS cnt 
+		FROM 
+			koker_member a
+	
+		UNION ALL
+		
+		SELECT 
+			a.class_code, COUNT(a.class_code) 
+		FROM 
+			koker_member a
+		WHERE
+			a.use_yn = 'y' AND a.member_code = '01'
+		GROUP BY
+			a.class_code
+		
+		UNION ALL
+	
+		SELECT
+			'wait', COUNT(a.class_code) 
+		FROM
+			koker_member a
+		WHERE
+			a.use_yn = 'y' AND a.member_code = '02'
+		
+		UNION ALL
+	
+		SELECT
+			'del', COUNT(*) 
+		FROM
+			koker_member a
+		WHERE
+			a.use_yn = 'n' AND a.member_code = '03'
+	</select>
+	
+	<!-- 이벤트 리스트 뽑기 -->
+	<select id="event_list" parameterType="gongsakoker.vo.EventVO" resultType="gongsakoker.vo.EventVO">
+		/*이벤트 리스트*/
+		SELECT 
+			event_no
+			,event_title
+			,event_date1
+			,event_date2
+			,event_content
+			,event_title_img
+			,event_title_img_path
+			,event_use_yn
+			,event_insert_date
+		FROM
+			koker_event
+		<where>
+			<if test="event_use_yn != '' and event_use_yn != null">
+				event_use_yn = #{event_use_yn}
+			</if>
+		</where>
+		ORDER BY
+			event_insert_date DESC
+	</select>
+	
+	<!-- 이벤트 등록 -->
+	<insert id="event_insert" parameterType="gongsakoker.vo.EventVO">
+		/*이벤트 등록*/
+		INSERT INTO 
+			koker_event
+				(
+					event_title
+					,event_date1
+					,event_date2
+					,event_content
+					,event_participation
+					,event_pay
+					,event_url
+					,event_url_text
+					,event_use_yn
+					,event_insert_date
+					<if test="event_content_img != null and event_content_img !='' ">
+						,event_content_img
+						,event_content_img_path
+					</if>
+					<if test="event_title_img != null and event_title_img !='' ">
+						,event_title_img
+						,event_title_img_path
+					</if>
+				)
+		VALUES
+			(
+				#{event_title}
+				,#{event_date1}
+				,#{event_date2}
+				,#{event_content} 
+				,#{event_participation}
+				,#{event_pay}
+				,#{event_url}
+				,#{event_url_text}
+				,#{event_use_yn}
+				,NOW()
+				<if test="event_content_img != null and event_content_img !='' ">
+					,#{event_content_img}
+					,#{event_content_img_path}
+				</if>
+				<if test="event_title_img != null and event_title_img !='' ">
+					,#{event_title_img}
+					,#{event_title_img_path}
+				</if>
+			)
+	</insert>
+	
+	<!-- 이벤트 한개 정보 가져오기 -->
+	<select id="event_one" parameterType="gongsakoker.vo.EventVO" resultType="gongsakoker.vo.EventVO">
+		/*이벤트 한개 정보*/
+		SELECT 
+			*
+		FROM
+			koker_event
+		WHERE
+			event_no = #{event_no}
+	</select>
+	
+	<!-- 이벤트 업데이트 -->
+	<update id="event_update" parameterType="gongsakoker.vo.EventVO">
+		/*이벤트 수정*/
+		UPDATE
+			koker_event
+		SET 
+			event_title = #{event_title}
+			,event_date1 = #{event_date1}
+			,event_date2 = #{event_date2}
+			,event_content = #{event_content}
+			,event_pay = #{event_pay}
+			,event_participation = #{event_participation} 
+			,event_url = #{event_url}
+			,event_url_text = #{event_url_text}
+			,event_use_yn = #{event_use_yn}
+			,event_insert_date = now() 
+			<if test="event_content_img != null and event_content_img !='' ">
+				,event_content_img = #{event_content_img}
+				,event_content_img_path = #{event_content_img_path}
+			</if>
+			<if test="event_title_img != null and event_title_img !='' ">
+				,event_title_img = #{event_title_img}
+				,event_title_img_path = #{event_title_img_path}
+			</if>
+		 
+		WHERE
+			event_no = #{event_no}
+	</update>
+	
+	<!-- 광고 리스트,한개,검색  뽑기-->
+	<select id="advertise_list" parameterType="gongsakoker.vo.BoardVO" resultType="gongsakoker.vo.BoardVO">
+		/*광고 리스트*/
+		SELECT
+			*
+		FROM
+			koker_board a
+		<if test="board_no != '' and board_no != null">
+			LEFT OUTER JOIN 
+				koker_board_answer b ON a.board_no = b.board_no 
+		</if>
+		LEFT OUTER JOIN
+			koker_member c ON a.member_no = c.member_no
+		WHERE
+			a.board_code = '01' and c.use_yn = 'y'
+			<if test="board_no != '' and board_no != null">
+				and a.board_no = #{board_no}
+			</if>
+			<if test="board_complete != '' and board_complete != null">
+				and a.board_complete = #{board_complete}
+			</if>
+			<if test="board_write != '' and board_write != null">
+				and a.board_write like CONCAT('%',#{board_write}, '%')
+			</if>
+		ORDER BY
+			a.board_date DESC
+	</select>
+	
+	<!-- 광고문의 수정 -->
+	<update id="advertise_update" parameterType="gongsakoker.vo.BoardVO">
+		/*광고 업데이트*/
+		UPDATE 
+			koker_board_answer
+		SET
+			answer_content = #{answer_content}
+			,answer_write = #{answer_write}
+			,board_no = #{board_no}
+		WHERE 
+			answer_no = #{answer_no}
+	</update>
+	
+	<!-- 광고문의 등록 시작 -->
+	<insert id="advertise_insert1" parameterType="gongsakoker.vo.BoardVO">
+		/*광고등록*/
+		INSERT INTO
+			koker_board_answer
+				(
+					answer_content
+					,answer_write
+					,board_no
+					,answer_date
+				)
+		VALUES
+			(
+				#{answer_content}
+				,#{answer_write}
+				,#{board_no}
+				,now()
+			)
+	</insert>
+	<update id="advertise_insert2">
+		/*광고 수정*/
+		UPDATE
+			koker_board
+		SET
+			board_complete = #{board_complete}
+		WHERE
+			board_no = #{board_no}
+	</update>
+	<!-- 광고문의 등록 끝 -->
+	
+	<!-- 광고문의 답변 등록 확인 -->
+	<select id="advertise_confirm" parameterType="gongsakoker.vo.BoardVO" resultType="int">
+		/*광고문의 답변등록 확인*/
+		SELECT
+			count(board_no)
+		FROM
+			koker_board_answer
+		WHERE
+			board_no = #{board_no}
+	</select>
+	
+	<!-- 1:1문의 한개,리스트,검색 뽑기 -->
+	<select id="question_list" parameterType="gongsakoker.vo.BoardVO" resultType="gongsakoker.vo.BoardVO">
+		/*1:1문의 검색결과 or 리스트 뽑기*/
+		SELECT
+			*
+		FROM
+			koker_board a
+		<if test="board_no != '' and board_no != null">
+			LEFT OUTER JOIN 
+				koker_board_answer b ON a.board_no = b.board_no 
+		</if>
+		LEFT OUTER JOIN
+			koker_member c ON a.member_no = c.member_no
+		WHERE
+			a.board_code = '02' and c.use_yn = 'y'
+			<if test="board_no != '' and board_no != null">
+				and a.board_no = #{board_no}
+			</if>
+			<if test="board_complete != '' and board_complete != null">
+				and a.board_complete = #{board_complete}
+			</if>
+			<if test="board_write != '' and board_write != null">
+				and a.board_write like CONCAT('%',#{board_write}, '%')
+			</if>
+		ORDER BY
+			a.board_date DESC
+	</select>
+	
+	<!-- 1:1문의 수정 -->
+	<update id="question_update" parameterType="gongsakoker.vo.BoardVO">
+		/*1:1문의 수정*/
+		UPDATE 
+			koker_board_answer
+		SET
+			answer_content = #{answer_content}
+			,answer_write = #{answer_write}
+			,board_no = #{board_no}
+		WHERE
+			answer_no = #{answer_no}
+	</update>
+	
+	<!-- 1:1문의 등록 시작 -->
+	<insert id="question_insert1" parameterType="gongsakoker.vo.BoardVO">
+		/*1:1 문의 등록*/
+		INSERT INTO
+			koker_board_answer
+							(
+								answer_content
+								,answer_write
+								,board_no
+								,answer_date
+							)
+		VALUES
+			(
+				#{answer_content}
+				,#{answer_write}
+				,#{board_no}
+				,now()
+			)
+	</insert>
+	<update id="question_insert2">
+		/*1:1문의 업데이트*/
+		UPDATE
+			koker_board
+		SET
+			board_complete = #{board_complete}
+		WHERE
+			board_no = #{board_no}
+	</update>
+	<!-- 1:1문의 등록 끝 -->
+	
+	<!-- 1:1문의 답변 등록 확인 -->
+	<select id="question_confirm" parameterType="gongsakoker.vo.BoardVO" resultType="int">
+		/*1:1 문의 답변 등록 확인*/
+		SELECT
+			count(board_no)
+		FROM
+			koker_board_answer
+		WHERE
+			board_no = #{board_no}
+	</select>
+	
+	<!-- 자주묻는 질문 리스트,한개 -->
+	<select id="qna_list"  parameterType="gongsakoker.vo.BoardVO" resultType="gongsakoker.vo.BoardVO">
+		/*자주묻는질문 리스트 or 한개*/
+		SELECT
+			*
+		FROM
+			koker_board a
+		<if test="board_no != '' and board_no != null">
+			LEFT OUTER JOIN 
+				koker_board_answer b ON a.board_no = b.board_no 
+		</if>
+		WHERE
+			a.board_code = '03'
+			<if test="board_no != '' and board_no != null">
+				and a.board_no = #{board_no}
+			</if>
+		ORDER BY
+			a.board_date DESC
+	</select>
+	
+	<!-- 자주묻는 질문 수정 시작 -->
+	<update id="qna_update1" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 수정*/
+		UPDATE
+			koker_board
+		SET
+			board_title = #{board_title}
+			,board_content = #{board_content}
+			,board_write = #{board_write}
+		WHERE 
+			board_no = #{board_no}
+	</update>
+	
+	<update id="qna_update2" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 수정*/
+		UPDATE 
+			koker_board_answer
+		SET
+			answer_content = #{answer_content}
+			,answer_write = #{answer_write}
+		WHERE
+			board_no = #{board_no}
+	</update>
+	<!-- 자주묻는 질문 수정 끝 -->
+	
+	<!-- 자주묻는 질문 등록 확인 -->
+	<select id="qna_confirm" parameterType="gongsakoker.vo.BoardVO" resultType="int">
+		/*자주묻는 질문 확인*/
+		SELECT
+			count(board_no)
+		FROM
+			koker_board_answer
+		WHERE
+			board_no = #{board_no}
+	</select>
+	
+	<!-- 자주 묻는 질문 등록 시작-->
+	<insert id="qna_insert1" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 등록*/
+		INSERT INTO
+			koker_board(
+							board_title
+							,board_content
+							,board_write
+							,board_date
+							,board_code
+							,board_complete
+						)
+		VALUES
+			(
+				#{board_title}
+				,#{board_content}
+				,#{board_write}
+				,now()
+				,#{board_code}
+				,#{board_complete}
+			)
+	</insert>
+	
+	<select id="qna_board_no" parameterType="gongsakoker.vo.BoardVO" resultType="String">
+		/*자주묻는 질문 한개 가져오기*/
+		SELECT
+			board_no
+		FROM
+			koker_board
+		WHERE
+			board_title = #{board_title} 
+			and board_content = #{board_content}
+	</select>
+	
+	<insert id="qna_insert2" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 답변 넣기*/
+		INSERT INTO
+			koker_board_answer(answer_content,answer_date,answer_write,board_no)
+		VALUES
+			(
+				#{answer_content}
+				,now()
+				,#{answer_write}
+				,#{board_no}
+			)
+	</insert>
+	<!-- 자주 묻는 질문 등록 끝-->
+	
+	<!-- 자주묻는 질문 삭제 시작-->
+	<delete id="qna_delete1" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 삭제*/
+		DELETE 
+		FROM
+			koker_board
+		WHERE
+			board_no = #{board_no}	
+	</delete>
+	<delete id="qna_delete2" parameterType="gongsakoker.vo.BoardVO">
+		/*자주묻는 질문 답변 삭제*/
+		DELETE 
+		FROM
+			koker_board_answer
+		WHERE
+			board_no = #{board_no}	
+	</delete>
+	<!-- 자주묻는 질문 삭제 끝 -->
+	
+	<!--업체등록 전체&검색 리스트 불러오기-->
+	<select id="getListAddCompany" resultType="gongsakoker.vo.AddCompanyVO" parameterType="map">
+		/*업체 등록 전체,검색 리스트 불러오기*/
+	  	SELECT 
+			*
+   	    FROM 
+			koker_addCompany a
+	    LEFT OUTER JOIN
+			koker_member b ON a.member_no = b.member_no
+		WHERE
+			b.use_yn = 'y'
+		<if test="company_recommender != '' and company_recommender != null">
+	    	and a.company_recommender like CONCAT('%', #{company_recommender}, '%') 
+		</if>
+	    ORDER BY 
+			a.company_no DESC
+		LIMIT
+			#{startRowNum}, #{endRowNum}
+	</select>
+	
+	<!-- 업체등록 체크 카운트 -->
+	<select id="countKoker_addCompany_check" resultType="java.lang.Integer" parameterType="map">
+		/*업체 등록 카운트*/
+		SELECT 
+			COUNT(*) as count
+		FROM 
+			koker_addCompany
+		WHERE
+			company_call_ok=#{company_call_ok}
+	</select>
+	
+	<!-- 업체등록 체크 리스트 -->
+	<select id="getListAddCompany_check" resultType="gongsakoker.vo.AddCompanyVO" parameterType="map">
+		/*업체등록 체크 리스트*/
+		SELECT 
+			*
+		FROM 
+			koker_addCompany
+		WHERE
+			company_call_ok=#{company_call_ok}
+		ORDER BY 
+			company_no DESC
+		LIMIT
+			#{startRowNum}, #{endRowNum}
+	</select>
+	
+	<!--업체등록 수정 -->
+	<update id="company_call_upadte" parameterType="map">
+		/*업체등록 수정*/
+	    UPDATE
+	    	koker_addCompany
+	    SET
+	    	company_call_ok=#{company_call_ok}
+	    WHERE
+	    	company_no = #{company_no}
+	</update>
+	
+	<!-- 업체등록 전체 카운트 -->
+	<select id="countKoker_addCompany" resultType="java.lang.Integer" parameterType="map">
+		/*업체등록 전체 카운트*/
+		SELECT 
+			COUNT(*) as count
+		FROM 
+			koker_addCompany a
+		LEFT OUTER JOIN
+			koker_member b ON a.member_no = b.member_no
+		WHERE
+			b.use_yn = 'y'
+	  <if test="company_recommender != '' and company_recommender != null">
+			and a.company_recommender like CONCAT('%', #{company_recommender}, '%')
+	  </if>
+	</select>
+	
+	<!-- 클래스 코드별 랭킹 50개 -->
+	<select id="infoAverage" parameterType="gongsakoker.vo.MemberVO" resultType="hashmap">
+		/*클래스 코드별 랭킹 50개*/
+		SELECT 
+			a.koker_name
+			,ROUND(AVG(b.review),1) average
+			,a.koker_no 
+		FROM
+			koker_info a
+		LEFT OUTER JOIN 
+			koker_review b ON a.koker_no = b.koker_no
+		LEFT OUTER JOIN 
+			koker_member c ON a.member_no = c.member_no
+		WHERE 
+			a.class_code = #{class_code}  
+			AND b.review IS NOT NULL
+			AND a.rank_yn = 'n'
+			AND c.use_yn = 'y'
+		GROUP BY 
+			a.koker_no
+		ORDER BY
+			average DESC
+		LIMIT 0 , 50
+	</select>
+	
+	<!-- 랭크 불러오기 -->
+	<select id="rankNumber" parameterType="gongsakoker.vo.MemberVO" resultType="gongsakoker.vo.MemberVO">
+		/*랭크 불러오기 (코드별)*/
+		SELECT
+			*
+		FROM
+			koker_rank a
+		LEFT OUTER JOIN 
+			koker_info b ON a.koker_no = b.koker_no
+		WHERE
+			b.class_code = #{class_code} 
+			AND b.rank_yn = 'n'
+		ORDER BY
+			a.rank_no
+	</select>
+	
+	<!-- 삭제된 랭크 불러오기 -->
+	<select id="deleteRank" parameterType="gongsakoker.vo.MemberVO" resultType="hashmap">
+		/*랭크에서 제외된 값 불러오기*/
+		SELECT 
+			a.koker_name
+			,ROUND(AVG(b.review),1) average
+			,a.koker_no 
+		FROM
+			koker_info a
+		LEFT OUTER JOIN 
+			koker_review b ON a.koker_no = b.koker_no
+		LEFT OUTER JOIN 
+			koker_member c ON a.member_no = c.member_no
+		WHERE 
+			a.class_code = #{class_code}  
+			AND b.review IS NOT NULL
+			AND a.rank_yn = 'y'
+			AND c.use_yn = 'y' 
+		GROUP BY 
+			a.koker_no
+		ORDER BY
+			average DESC
+		LIMIT 0 , 50
+	</select>
+	
+	<!-- 클래스 코드 별 랭킹 삭제 -->
+	<delete id="deleteRanking" parameterType="String">
+		/*랭킹 삭제*/
+		DELETE
+		FROM
+			koker_rank
+		WHERE 
+			class_code=#{class_code}
+	</delete>
+	
+	<!-- 랭킹 입력 -->
+	<insert id="rankInsert" parameterType="map">
+		/*랭킹 입력*/
+		INSERT INTO
+			koker_rank(koker_no,class_code,ranking,average)
+		VALUES
+			(#{koker_no},#{class_code},#{ranking},#{average})
+	</insert>
+	
+	<!-- 랭킹 금지 목록  -->
+	<update id="rankDelete" parameterType="map">
+		/*랭킹 제외 목록 업데이트*/
+		UPDATE
+			koker_info
+		SET
+			rank_yn = 'y'
+		WHERE
+			koker_no = #{koker_no}
+	</update>
+	
+	<!-- 랭킹 목록 삭제 리셋 -->
+	<update id="rankReset" parameterType="String">
+		/*랭킹목록 리셋*/
+		UPDATE
+			koker_info
+		SET	
+			rank_yn = 'n'
+		WHERE
+			class_code = #{class_code}
+	</update>
+	
+	<!-- 지역게시판 리스트  -->
+	<select id="localList" parameterType="gongsakoker.vo.LocalBoardVO" resultType="gongsakoker.vo.LocalBoardVO">
+		/*지역게시판 리스트*/
+		SELECT 
+			*
+		FROM
+			koker_local_board
+		<where>
+			<if test="sido != '' and sido != null">
+				sido = #{sido}
+			</if>
+			<if test="gugun != '' and gugun != null">
+				and gugun = #{gugun}
+			</if>
+			<if test="category != '' and category != null">
+				and category = #{category}
+			</if>
+		</where>
+		ORDER BY
+			board_no ASC
+	</select>
+	
+	<!-- 지역게시판 한개 -->
+	<select id="localUpdateMain" parameterType="gongsakoker.vo.LocalBoardVO" resultType="gongsakoker.vo.LocalBoardVO">
+		SELECT
+			*
+		FROM
+			koker_local_board
+		WHERE
+			board_no = #{board_no}
+	</select>
+	
+	<!-- 지역게시판 수정 -->
+	<update id="localUpdate" parameterType="gongsakoker.vo.LocalBoardVO">
+		UPDATE
+			koker_local_board
+		SET
+			sido = #{sido}
+			,gugun = #{gugun}
+			,category = #{category}
+			,sponsor = #{sponsor}
+			,title = #{title}
+			,place = #{place}
+			,start_date = #{start_date}
+			,end_date = #{end_date}
+			,tel = #{tel}
+			,content = #{content}
+			,use_yn = #{use_yn}
+		WHERE
+			board_no = #{board_no}
+	</update>
+	
+	<!-- 견적 리스트 -->
+	<select id="estimateList" parameterType="map" resultType="gongsakoker.vo.EstimateVO">
+		SELECT 
+			a.est_no, a.member_no, c.member_id, a.est_sido, a.est_gugun
+			, a.est_area, a.est_startDate, a.est_endDate, a.est_cost
+			, a.est_content, a.est_img01, a.est_img02, a.est_img03
+			, a.est_imgPath, a.est_agreement, a.est_state, a.setEst_no
+			, b.estType01_code, b.estType02_code
+		FROM
+			koker_estimate AS a
+		LEFT JOIN
+			koker_estimate_field AS b
+		ON	a.est_no = b.est_no
+		LEFT JOIN
+			koker_member AS c
+		ON	a.member_no = c.member_no
+		<where>
+			<if test="est_sido != '' and est_sido != null">
+			    a.est_sido = #{est_sido}
+			</if>
+			<if test="est_gugun != '' and est_gugun != null">
+			    and a.est_gugun = #{est_gugun}
+			</if>
+			<if test="estType01_code != '' and estType01_code != null">
+				and b.estType01_code = #{estType01_code}
+			</if>
+			<if test="estType02_code != '' and estType02_code != null">
+			    and b.estType02_code = #{estType02_code}
+			</if>
+			<if test="member_id != '' and member_id != null">
+			    and c.member_id like CONCAT ('%', #{member_id} ,'%')
+			</if>
+			<if test="est_content != '' and est_content != null">
+			    and a.est_content like CONCAT('%', #{est_content} ,'%')
+			</if>
+		</where>
+		ORDER BY est_no DESC
+	</select>
+	
+	<!-- 카테고리 업데이트 리스트 -->
+	<select id="categoryUpdateList" parameterType="String" resultType="gongsakoker.vo.MemberVO">
+		/*카테고리 업데이트 리스트*/
+		Select
+			class_code,category,code_name,code_sort,code_no
+		FROM
+			koker_code
+		WHERE 
+			class_code = #{class_code}
+		ORDER BY 
+			code_sort ASC
+	</select>
+	
+	<update id="categoryUpdate" parameterType="gongsakoker.vo.MemberVO">
+		/*카테고리 업데이트*/
+		Update
+			koker_code
+		SET
+			category = #{category} , code_name = #{code_name} , code_sort = #{code_sort}
+		WHERE
+			class_code = #{class_code} and code_no = #{code_no}
+	</update>
+	
+	<insert id="categoryInsert" parameterType="gongsakoker.vo.MemberVO">
+		/*카테고리 입력*/
+		Insert into
+			koker_code(category,code_name,code_sort,class_code)
+		VALUES
+			(
+				#{category}
+				,#{code_name}
+				,#{code_sort}
+				,#{class_code}
+			)
+	</insert>
+	
+	<delete id="categoryDelete" parameterType="gongsakoker.vo.MemberVO">
+		/*카테고리 삭제*/
+		Delete from
+			koker_code
+		Where 
+			code_no = #{code_no}
+	</delete>
+	<!-- 카테고리 업데이트 끝 -->
+	
+	<select id="admin_c_s_board_list" parameterType="gongsakoker.vo.CommunityVO" resultType="gongsakoker.vo.CommunityVO">
+		/*현장스토리 한줄 공지사항 리스트 가져오기 각 코드별로!!*/
+		SELECT
+			*
+		FROM
+			koker_c_s_board
+		WHERE
+			c_s_code = #{c_s_code}
+		ORDER BY
+			c_s_insert_date DESC
+	</select>
+	
+	<select id="admin_c_s_board_updateMain" parameterType="gongsakoker.vo.CommunityVO" resultType="gongsakoker.vo.CommunityVO">
+		/* 현장스토리 한줄 공지사항 한개 가져오기*/
+		SELECT
+			*
+		FROM
+			koker_c_s_board
+		WHERE
+			c_s_no = #{c_s_no}
+	</select>
+	
+	<update id="c_s_board_update" parameterType="gongsakoker.vo.CommunityVO">
+		/*현장스토리 한줄 공지사항 업데이트*/
+		UPDATE
+			koker_c_s_board
+		SET 
+			c_s_code=#{c_s_code},c_s_title=#{c_s_title},c_s_content=#{c_s_content},c_s_use_yn=#{c_s_use_yn},admin_name=#{admin_name}
+		WHERE
+			c_s_no = #{c_s_no}
+	</update>
+	
+	<insert id="c_s_board_insert" parameterType="gongsakoker.vo.CommunityVO">
+		/*현장스토리 한줄 공지사항 입력*/
+		INSERT INTO
+			koker_c_s_board(c_s_code , c_s_title , c_s_content , c_s_insert_date , c_s_use_yn , admin_name)
+		VALUES
+			(#{c_s_code} , #{c_s_title} , #{c_s_content} , now() , #{c_s_use_yn} , #{admin_name})
+	</insert>
+	
+	<select id="admin_community" resultType="gongsakoker.vo.CommunityVO" parameterType="map">
+		/* 한줄게시판 리스트 */
+		SELECT
+			a.cm_no
+			,a.cm_content
+			,a.cm_insert_date
+			,a.member_no
+			,b.member_id
+			,b.name
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_recommend WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS recommend_count
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_reply WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS reply_count
+		FROM
+			koker_community a
+		INNER JOIN
+			koker_member b
+		ON 
+			a.member_no = b.member_no
+		<where>
+			<if test="cm_use_yn != '' and cm_use_yn != null">
+			    a.cm_use_yn = #{cm_use_yn}
+			</if>
+			<if test="search != '' and search != null">
+			    and b.name Like CONCAT('%',#{search},'%') 
+			</if>
+		</where>
+		ORDER BY 
+			a.cm_insert_date DESC
+	</select>
+	
+	<select id="admin_community_detail" parameterType="gongsakoker.vo.CommunityVO" resultType="gongsakoker.vo.CommunityVO">
+		SELECT
+			a.cm_no
+			,a.cm_content
+			,a.cm_insert_date
+			,a.member_no
+			,a.cm_use_yn
+			,b.member_id
+			,b.name
+			,IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_community_recommend WHERE cm_no = a.cm_no GROUP BY cm_no), 0) AS recommend_count
+		FROM
+			koker_community a
+			
+		INNER JOIN
+			koker_member b
+		ON a.member_no = b.member_no
+			
+		WHERE
+			a.cm_no = #{cm_no}
+		ORDER BY 
+			a.cm_insert_date DESC
+	</select>
+	
+	<select id="admin_community_detail_reply" parameterType="gongsakoker.vo.CommunityVO" resultType="gongsakoker.vo.CommunityVO">
+		/* 한줄게시판 상세 댓글 리스트*/
+		SELECT 
+			* 
+		FROM 
+			koker_community_reply a
+		INNER JOIN 
+			koker_member b
+		ON a.member_no = b.member_no
+		WHERE 
+			a.cm_no = #{cm_no}
+		ORDER BY 
+			a.reply_insert_date DESC
+	</select>
+	
+	<update id="community_update" parameterType="gongsakoker.vo.CommunityVO">
+		/*커뮤니티글 사용유무 수정*/
+		UPDATE
+			koker_community
+		SET
+			cm_use_yn = #{cm_use_yn}
+		WHERE
+			cm_no = ${cm_no}
+	</update>
+	
+	<update id="reply_update" parameterType="gongsakoker.vo.CommunityVO">
+		/*댓글 사용유무 수정*/
+		UPDATE
+			koker_community_reply
+		SET
+			reply_use_yn = #{reply_use_yn}
+		WHERE
+			reply_no = ${reply_no}
+	</update>
+	
+	<select id="admin_reportList" parameterType="map" resultType="gongsakoker.vo.ReportVO">
+		/*신고 테이블 리스트*/
+		SELECT * FROM
+			(
+			SELECT report_no
+				, report_grade
+				, report_content
+				, report_category
+				, report_insert_date
+				, member_no
+				, cm_no
+				, report_use_yn
+				, reply_no
+				, gubun_code
+				, '' AS fs_no
+				, '' AS ans_no
+			FROM koker_report_community
+			UNION ALL
+			SELECT report_no
+				, report_grade
+				, report_content
+				, report_category
+				, report_insert_date
+				, member_no
+				, '' AS cm_no
+				, report_use_yn
+				, '' AS reply_no
+				, gubun_code
+				, fs_no
+				, ans_no
+			FROM koker_report_story
+			) a
+		LEFT OUTER JOIN
+			koker_member b
+		ON b.member_no = a.member_no
+		<where>
+			<if test="gubun_code != '' and gubun_code != null">
+				a.gubun_code = #{gubun_code}
+			</if>
+			<if test="search != '' and search != null">
+				and b.name LIKE CONCAT('%',#{search},'%')
+			</if>
+		</where>
+		ORDER BY report_insert_date DESC
+	</select>
+	
+	<select id="admin_chargeList" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+		SELECT
+			*
+		FROM
+			koker_charge_member a
+		INNER JOIN
+			koker_info b
+		ON a.koker_no = b.koker_no
+		INNER JOIN
+			koker_member c
+		ON b.member_no = c.member_no
+		WHERE 
+			DATE_FORMAT(a.end_date, "%Y-%c-%e") = DATE_FORMAT((NOW()+INTERVAL ${charge_day} DAY), "%Y-%c-%e") AND a.charge_yn = 'y'
+	</select>
+	
+	<select id="fieldStory_listCount" resultType="java.lang.Integer" parameterType="map">
+		/*관리자 현장스토리 리스트 카운트 리스트*/
+	    SELECT
+			COUNT(*) as count
+		FROM
+			koker_fieldstory a
+		<where>
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				and sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="member_no != 'default' and member_no != '' and member_no != null">
+			    and a.member_no = #{member_no}
+			</if>
+			<if test="search_content != 'default' and search_content != '' and search_content != null">
+				<if test="search_choice == 0">
+				    and a.title like CONCAT('%', #{search_content}, '%')
+				    or
+				    a.content like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 1">
+				 	and a.title like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 2">
+				    and a.member_id like CONCAT('%', #{search_content}, '%')
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="fieldStory_webList_data" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+		/*관리자 현장스토리 리스트 리스트*/
+		SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.use_yn
+			, IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		<where>
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				and sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="member_no != 'default' and member_no != '' and member_no != null">
+			    and a.member_no = #{member_no}
+			</if>
+			<if test="search_content != 'default' and search_content != '' and search_content != null">
+				<if test="search_choice == 0">
+				    and a.title like CONCAT('%', #{search_content}, '%')
+				    or
+				    a.content like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 1">
+				 	and a.title like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 2">
+				    and a.member_id like CONCAT('%', #{search_content}, '%')
+				</if>
+			</if>
+		</where>
+		<if test="list_select == 'new'">
+			ORDER BY a.insertDate DESC
+		</if>
+		<if test="list_select == 'comment'">
+			ORDER BY answer_count DESC
+		</if>
+		<if test="list_select == 'recommend'">
+			ORDER BY recommend_count DESC
+		</if>
+		LIMIT
+			#{startRowNum}
+			, #{endRowNum};  
+	</select>
+	
+	<select id="fieldStoryVo_select" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+		/*관리자 현장스토리 상세정보*/
+	    SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.use_yn
+			, IFNULL(( SELECT COUNT(ans_no) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		WHERE
+			a.fs_no = #{fs_no}	    
+	</select>
+	
+	<update id="modify_fieldStory_use_yn" parameterType="map">
+	/*관리자 현장스토리 use_yn 업데이트*/
+	UPDATE
+		koker_fieldstory
+	SET
+		use_yn = #{use_yn}
+	WHERE
+		fs_no = #{fs_no}
+	</update>
+	
+	<delete id="delete_fieldStory_answer" parameterType="map">
+	/*관리자 현장스토리 댓글 삭제*/
+	DELETE FROM
+		koker_fieldstory_answer
+	WHERE
+		ans_no = #{ans_no}	
+	</delete>
+	
+</mapper>

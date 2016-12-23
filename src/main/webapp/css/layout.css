@@ -1,0 +1,388 @@
+
+.container {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+.footer_wrap{
+	margin: 0;
+	padding: 0;
+	width: 100%;   
+}
+.content, .board_content, .footer, .slogan {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.content div, .footer div, .slogan div {
+	box-sizing: border-box;
+}
+      
+.content, .footer, .slogan {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+}
+.header, .introduce,  .service01, .service02, .service03, .service04, .banner{
+	width: 100%;
+}
+
+@media (min-width: 600px) {
+	.introduce,	.footer_sub01, .footer_sub02, .footer_sub03{
+		width:100%;
+	}
+	.service01, .service02, .service03, .service04{
+	    margin-bottom:50px;
+	}
+	.slogan_img{
+		width:100%;
+	}
+	.slogan_text{
+		width:100%;
+	}
+	.slogan_btn{
+		width:100%;
+	}
+	.top_banner{
+		display:none;
+	}
+	.slogan_wrap{
+		display:none;
+	}
+}
+
+@media (min-width: 800px) {
+	.header {
+		width: 100%;
+	}
+	.introduce{
+		width:100%;
+	}
+	.main_content_icon {
+		width:980px;
+		margin:0 auto;
+	}
+	.service01, .service02, .service03, .service04 {
+		width: 25%;
+	}
+	.footer_sub01, .footer_sub02, .footer_sub03{
+		width:33.3%;
+	    float: left;
+	}
+	.banner {
+		width: 100%;
+	}
+	.top_banner{
+		display:block;
+	}
+	.slogan_wrap{
+		display:block;
+	}
+	#toggle{
+		display:none;
+	}
+	#nav{
+		display:block;
+	}
+	.content, .board_content {
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	.slogan{
+	  width: 980px;
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+	.footer{
+	  width: 980px;
+	  margin-left: auto;
+	  margin-right: auto;
+	  height:300px;
+	}
+	#toggle{
+		display:none;
+	}
+	#nav{
+		display:block;
+	}
+}
+
+@media (min-width: 800px) {
+	
+}
+/* 메뉴 */
+
+nav > ul {
+  	float: right;
+	margin: 0;
+	padding: 0;
+	list-style:none;
+	width:90%;
+}
+
+nav > ul > li {
+  	text-align: center;
+	line-height: 40px;
+	margin-left: 70px;
+}
+
+.board_head nav > ul > li {
+  	text-align: center;
+	line-height: 43px;
+	margin-left: 35px;
+}
+
+.board_head nav > ul > li > ul > li{
+	list-style: none;
+	text-align:left;
+}
+nav > ul li ul li {
+	width: 100%;
+  	text-align: left;
+}
+
+nav ul li:hover {
+	cursor: pointer;
+	position: relative;
+}
+nav ul li:hover > ul {
+  	display: block;
+}
+nav ul li:hover > a {
+	color: #21b4d6;
+}
+.board_head nav ul li:hover > a {
+	color: #fff;
+	text-decoration:none;
+}
+.board_head .search_area {
+	width:40%;
+}
+.board_head .search_area span {
+	float:left;
+	text-align:left;
+}
+.board_head .search_area span img {
+	width:10%;
+	vertical-align:middle;
+}
+.board_content{
+	min-height:700px;
+}
+nav > ul > li > a {
+	cursor: pointer;
+	display: block;
+	outline: none;
+	width: 100%;
+	text-decoration: none;
+	font-size:18px;
+	font-weight:bold;
+}
+.board_head nav > ul > li > a {
+    cursor: pointer;
+    display: block;
+    outline: none;
+    width: 100%;
+    text-decoration: none;
+    font-size: 11pt;
+}
+nav > ul > li {
+  	float: left;
+}
+nav a {
+	color: #fff;
+}
+nav > ul li ul {
+	display: none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	width: 100%;
+	z-index: 2000;
+}
+nav > ul li ul li > a {
+	text-decoration: none;
+}
+nav ul .search_btn select {
+	background-color:#29a9c8;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border:none;
+	font-family:"GodoM";
+	font-size:16px;
+	outline:none;
+}
+.search_btn{
+	 width:300px;
+	 text-align:left;
+}
+nav ul .search_btn_main select {
+	background-color:#fff;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border:none;
+	font-family:"GodoM";
+	font-size:16px;
+	outline:none;
+}
+
+.board_head [type="checkbox"], .board_head label {
+	display: none;
+}
+.board_head ul li input[type="text"] {
+	background-color:#29a9c8;
+	color:#fff;
+	border:none;
+	text-size:12pt;
+	font-family:"GodoM"
+}
+.board_head-placeholder {
+	color:#fff;
+	font-family:"GodoM";
+}
+.board_head ::-webkit-input-placeholder {
+	color:#fff;
+	font-family:"GodoM";
+}
+.board_head :moz-placeholder {
+	color:#fff;
+	font-family:"GodoM";
+}
+.main_search_area-placeholder {
+	color:#969696;
+	font-family:"GodoM";
+}
+.main_search_area ::-webkit-input-placeholder {
+	color:#969696;
+	font-family:"GodoM";
+}
+.main_search_area :moz-placeholder {
+	color:#969696;
+	font-family:"GodoM";
+}
+nav > ul > li .head_login_btn {
+	float:right;
+}
+
+@media screen and (min-width: 768px ) and (max-width: 769px ) {
+	.board_head{
+	position:fixed;
+	top:0;
+	left:0;
+	width:97%;
+	z-index:9999;
+	}
+}
+@media screen and (max-width: 767px) {
+	.board_head{
+	position:fixed;
+	top:0;
+	left:0;
+	width:93%;
+	z-index:9999;
+	}
+}
+@media screen and (max-width: 768px) {
+	.board_head ul {
+		display: none;
+	}
+
+	.board_head label {
+		display: block;
+		background: #29a9c8;
+		width: 40px;
+		height: 40px;
+		cursor: pointer;
+		position: absolute;
+		right: 10px;
+		top: 8px;
+	}
+  
+	.board_head label:after{
+		content:'';
+		display: block;
+		width: 30px;
+		height: 5px;
+		background: #777;
+		margin: 7px 5px;
+		box-shadow: 0px 10px 0px #777, 0px 20px 0px #777
+	}
+	.board_header label{
+		top: 0;
+	}
+	.board_head nav > ul > li > a{
+		font-size:18px;
+	}
+	.board_head nav > ul > li{
+		margin:0;	
+		width:100%;
+	}
+
+	.board_head [type="checkbox"]:checked ~ ul {
+		display: block;
+		z-index: 9999;
+		position: absolute;
+		left: 0px;
+		width:100%;
+	    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.7);
+	}
+	.head_login_btn{
+	   text-align: right !important;
+	   padding-right: .5em;
+	}
+	nav a {
+		color: #fff;
+	}
+
+	nav ul li {
+		display: block;
+		float: none;
+		width: 100%;
+		text-align: center;
+		background: #29a9c8;
+		text-indent: 20px;
+	}
+
+	nav > ul > li {
+		margin-left: 0px;
+	}
+
+	nav > ul li ul li {
+		display: block;
+		float: none;
+	}
+
+	nav > ul li ul {
+		display: block;
+		position: relative;
+		width: 100%;
+		z-index: 9999;
+		float: none;
+	}
+	.board_head .search_area {
+	width:100%;
+	}
+	.board_head .search_area span {
+	float:none;
+	}
+	.board_head .search_area span img {
+	width:25px;
+	}
+	.top_banner{
+		display:none;
+	}
+	.slogan_wrap{
+		display:none;
+	}
+	.footer{
+		text-align:center;
+	}
+	.footer_sub01, .footer_sub02{
+		margin:0;
+	}
+	.board_content{
+		width:100%;
+	}
+}      

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="areaBoard">
+    
+    <select id="getAreaBoard" parameterType="gongsakoker.vo.LocalBoardVO" resultType="gongsakoker.vo.LocalBoardVO">
+		SELECT
+			board_no, category, member_no, member_id
+			, sido, gugun, title, content
+			, insert_date, img01, img02, img03
+			, img_path, use_yn
+		FROM
+			koker_local_board
+		<where>
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="category != 'default' and category != '' and category != null">
+				and category=#{category}
+			</if>
+			and use_yn="y"
+		</where>
+	</select>
+	
+	<select id="getAreaBoard_web_count" resultType="java.lang.Integer" parameterType="map">
+		SELECT
+			COUNT(*) as count
+		FROM
+			koker_local_board
+		<where>
+		    <if test="sido != 'defaults' and sido != '' and sido != null">
+				sido=#{sido}
+			</if>
+			 <if test="gugun != 'defaults' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="category != 'defaults' and category != '' and category != null">
+				and category=#{category}
+			</if>
+			and use_yn="y"
+		</where>
+	</select>
+	
+    <select id="getAreaBoard_web" parameterType="map" resultType="map">
+		SELECT
+			board_no, category, member_no, member_id
+			, sido, gugun, title, content
+			, insert_date, img01, img02, img03
+			, img_path, use_yn
+		FROM
+			koker_local_board
+		<where>
+		    <if test="sido != 'defaults' and sido != '' and sido != null">
+				sido=#{sido}
+			</if>
+			 <if test="gugun != 'defaults' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="category != 'defaults' and category != '' and category != null">
+				and category=#{category}
+			</if>
+			and use_yn="y"
+		ORDER BY board_no DESC
+		LIMIT
+			#{startRowNum}
+			, #{endRowNum};
+		</where>
+	</select>
+	
+    <insert id="insertLocalBoard" parameterType="gongsakoker.vo.LocalBoardVO">
+        INSERT INTO
+        	koker_local_board
+        		(
+        				category
+						, member_no
+						, member_id
+						, sido
+						, gugun
+						, title
+						, content
+						, insert_date
+						, img01
+						, img02
+						, img03
+						, img_path
+						, use_yn
+        		)
+        	VALUES
+        		(
+        			#{category}
+					, #{member_no}
+					, #{member_id}
+					, #{sido}
+					, #{gugun}
+					, #{title}
+					, #{content}
+					, #{insert_date}
+					, #{img01}
+					, #{img02}
+					, #{img03}
+					, #{img_path}
+					, 'y'
+        		)
+        
+    </insert>
+    
+    <select id="selectMemberLocalBoard" parameterType="int" resultType="gongsakoker.vo.LocalBoardVO">
+		SELECT
+			board_no, category, member_no, member_id
+			, sido, gugun, title, content
+			, insert_date, img01, img02, img03
+			, img_path, use_yn
+		FROM
+			koker_local_board
+		WHERE
+			member_no = #{member_no}
+			and 
+			use_yn='y'
+        
+    </select>
+    
+    
+    
+    <update id="modifyAreaBoard" parameterType="gongsakoker.vo.LocalBoardVO">
+        UPDATE
+        	koker_local_board
+        SET
+        	category = #{category}
+			, sido = #{sido}
+			, gugun = #{gugun}
+			, title = #{title}
+			, content = #{content}
+			, insert_date = #{insert_date}
+        WHERE
+        	board_no = #{board_no}
+    </update>
+    
+    <update id="deleteAreaBoard" parameterType="int">
+        UPDATE
+        	koker_local_board
+        SET
+        	use_yn = 'n'			
+        WHERE
+        	board_no = #{board_no}
+    </update>
+    
+    <select id="select_board_no" parameterType="int" resultType="gongsakoker.vo.LocalBoardVO">
+        SELECT
+        	*
+        FROM
+        	koker_local_board
+        WHERE
+        	board_no = #{board_no}
+    </select>
+    
+    <select id="get_categoryData" parameterType="map" resultType="map">
+        SELECT 
+			IF(cnt IS NULL OR cnt=0,NULL,board_no) AS board_no
+			, category, member_no, member_id
+			, sido, gugun, title, content
+			, insert_date, img01, img02, img03
+			, img_path, use_yn
+		FROM
+		(
+			SELECT
+				MAX(board_no) AS board_no
+				, COUNT(*) AS cnt
+				, category, member_no, member_id
+				, sido, gugun, title, content
+				, insert_date, img01, img02, img03
+				, img_path, use_yn
+			FROM 
+				koker_local_board
+			WHERE 
+				category=#{category} 
+			ORDER BY board_no DESC 
+			LIMIT 
+				0,2
+		 )a;
+
+    </select>
+    
+</mapper>

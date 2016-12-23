@@ -1,0 +1,261 @@
+/* 컨텐츠 그리드 -한- 시작  *2016-02-25 */
+
+body {
+	background-color:#fff;
+}
+.join_grid {
+    margin-left: -10px;
+    margin-right: -10px;
+    overflow:auto;
+    padding:.5em 0;
+    border-bottom:solid #e5e5e5 1px;
+}
+.join_grid p{
+	font-family:'godom';
+	font-size:14px;
+	border:none;
+    padding:.5em 0 .5em .2em;
+    font-weight:normal;
+}
+.join_grid input, .join_grid label{
+	display:block;
+}
+.join_grid input{
+	font-family:'나눔바른고딕';
+	font-size:14px;
+	border:none;
+    padding:.5em 0;
+}
+.join_grid ul li {
+	float:left;
+	list-style:none;
+	vertical-align:middle;
+	margin-right:10px;
+	line-height:31px;
+}
+.join_grid .phone_number input{
+	border-bottom:2px solid #ebebeb;
+	width:80px;
+	text-align:center;
+}
+.join_grid .phone_number input[type=number]::-webkit-inner-spin-button,
+.join_grid .phone_number input[type=number]::-webkit-outer-spin-button {
+	-webkit-appearance:none;
+	margin:0;
+}
+.join_grid_sec_2 { 
+	width: 50%;
+	vertical-align:middle;
+}
+.join_grid_sec_3{
+	width: 33.333% 
+}
+.join_grid_sec_4 { 
+	width: 25% 
+}
+.join_grid_sec_2, .join_grid_sec_3, .join_grid_sec_4 {
+    float: left;
+    padding:0 3%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.join_file {
+	text-align:center;
+	margin-top:10px;
+	margin-bottom:20px;
+}
+
+/* 컨텐츠 그리드  끝  */
+
+/* placeholder 디자인 -한- 시작 *2016-02-25 */
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  font-family:'나눔바른고딕';
+}
+::-moz-placeholder { /* Firefox 19+ */
+  font-family:'나눔바른고딕';
+}
+:-ms-input-placeholder { /* IE 10+ */
+  font-family:'나눔바른고딕';
+}
+:-moz-placeholder { /* Firefox 18- */
+  font-family:'나눔바른고딕';
+}
+
+/* placeholder 디자인  끝 */
+
+/* tab menu 디자인 - 한 - 시작  *2016-02-25 */
+
+.join_tabs {
+    font-family:'godom';
+}
+.join_tabs input:nth-of-type(1), .join_tabs input:nth-of-type(1) ~ div:nth-of-type(1), 
+.join_tabs input:nth-of-type(2), .join_tabs input:nth-of-type(2) ~ div:nth-of-type(2), 
+.join_tabs input:nth-of-type(3), .join_tabs input:nth-of-type(3) ~ div:nth-of-type(3), 
+.join_tabs input:nth-of-type(4), .join_tabs input:nth-of-type(4) ~ div:nth-of-type(4) {
+    display:none
+}
+.join_tabs input:nth-of-type(1):checked ~ div:nth-of-type(1), 
+.join_tabs input:nth-of-type(2):checked ~ div:nth-of-type(2), 
+.join_tabs input:nth-of-type(3):checked ~ div:nth-of-type(3),
+.join_tabs input:nth-of-type(4):checked ~ div:nth-of-type(4) {
+    display:block
+}
+.join_tabs tab1_content, tab2_content, tab3_content {
+	font-family:'나눔바른고딕';
+}
+
+.join_tabs img {
+	width:100%;
+}
+/* 라벨 기본 스타일 지정 */
+.join_tabs{
+	padding:2em 0;
+	text-align:center;
+}
+.join_tabs > label {
+    display:inline-block;
+    font-variant:small-caps;
+    font-size:14px;
+    padding:1em 0;
+    text-align:center;
+    width:23%;
+    line-height:14px;
+    font-weight:normal;
+    border-radius:20px;
+    background-color:#eee;
+    color:#666;
+    margin-bottom:1em;
+}
+.join_tabs > label:hover {
+    cursor:pointer
+}
+/* 선택된 라벨, 커서를 올린 라벨 스타일 지정 */
+.join_tabs input:nth-of-type(1):checked ~ label:nth-of-type(1), .join_tabs > label[for=tab1]:hover,
+.join_tabs input:nth-of-type(2):checked ~ label:nth-of-type(2), .join_tabs > label[for=tab2]:hover,
+.join_tabs input:nth-of-type(3):checked ~ label:nth-of-type(3), .join_tabs > label[for=tab3]:hover,
+.join_tabs input:nth-of-type(4):checked ~ label:nth-of-type(4), .join_tabs > label[for=tab4]:hover {
+    background-color:#21b4d6;
+    color:#fff;
+}
+/* 실제 내용이 담긴 div 요소 스타일 지정 */
+.join_tabs .tab1_content, .join_tabs .tab2_content, .join_tabs .tab3_content, .join_tabs .tab4_content {
+    border:1px solid #ddd;
+    width:100%;
+	height:15em;
+	overflow-y:auto;
+    border-radius:20px;
+}
+
+/* tab menu 디자인  끝 */
+
+/*select메뉴 디자인*/
+.join_member_select {
+	padding:.5em 0% .5em 2%;
+	width:100%;
+	border:2px solid #21b4d6;
+	border-radius:20px;
+	color:#21b4d6;
+	font-family:"GodoM";
+	font-size:10pt;
+}
+.join_grid_sec_2 #areaList {
+	padding:.5em 0% .5em 2%;
+	width:45%;
+	border:2px solid #21b4d6;
+	border-radius:20px;
+	color:#21b4d6;
+	font-family:"GodoM";
+	font-size:10pt;
+}
+.join_grid_sec_2 #cityList {
+	padding:.5em 0% .5em 2%;
+	width:50%;
+	border:2px solid #21b4d6;
+	border-radius:20px;
+	color:#21b4d6;
+	font-family:"GodoM";
+	font-size:10pt;
+}
+
+/*전문분야,파일첨부 span 디자인*/
+.join_onefield {margin-bottom:30px;}
+.join_onefield label {display:inline-block;vertical-align:middle;}
+.join_onefield input {display:block;}
+.join_onefield label{
+	border:2px solid #21b4d6;
+	background-color:#fff;
+	color:#21b4d6;
+	border-radius:20px;
+	cursor:pointer;
+}
+.join_onefield input:checked   label {
+	background-color:#21b4d6;
+	color:#fff;
+}
+.join_onefield label:hover{
+	border:2px solid #21b4d6;
+	background-color:#21b4d6;
+	color:#fff;
+	border-radius:20px;
+	cursor:pointer;
+}
+.join_plus {
+	margin-top:7px;
+}
+.join_plus span {
+	border:2px solid #21b4d6;
+	background-color:#21b4d6;
+	color:#fff;
+	border-radius:20px;
+	cursor:pointer;
+	text-align:center;
+	padding:.5em 35%;
+}
+
+
+.join_grid_sec_2 div input[type=text] {
+	width:35px;
+	display:inline-block;
+}
+
+
+/*join main*/
+	.join_main {width:70%;margin:0 auto;}
+	.join_main button {
+		padding:.5em 2em;
+		width:78%;
+		margin:10px 10%;
+		border-radius:18px;
+		font-size:13pt;
+		outline:none;
+		cursor:pointer;
+	}
+	
+	.chkOn_css{
+	background-color:#21b4d6 !important;
+	color:#fff !important;
+	}
+	
+@media only screen and (min-width:320px) and (max-width:374px) {
+	.join_plus span {padding: .5em 10%;}
+	.join_grid ul li {margin-right:0px;}
+	.join_grid .phone_number input{width:50px;}
+}
+
+@media only screen and (min-width:375px) and (max-width:413px) {
+	.join_plus span {padding: .5em 18%;}
+	.join_grid ul li {margin-right:0px;}
+	.join_grid .phone_number input{width:50px;}
+}
+
+@media only screen and (min-width:414px) and (max-width:599px) {
+	.join_plus span {padding: .5em 20%;}
+	.join_grid ul li {margin-right:0px;}
+	.join_grid .phone_number input{width:50px;}
+}
+
+@media only screen and (min-width: 600px) and (max-width:768px){
+	.join_plus span {padding: .5em 20%;}
+}

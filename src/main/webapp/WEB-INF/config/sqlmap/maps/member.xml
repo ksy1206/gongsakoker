@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+
+
+	
+	<select id="getMemberIDCheck" parameterType="map" resultType="String">
+		/*회원아이디 중복체크*/
+		SELECT
+			member_id	
+		FROM
+			koker_member
+		WHERE
+			member_id =#{member_id}
+	
+		
+ 
+	</select>
+	
+	<insert id="insertMember_join" parameterType="map">
+	
+		/*	회원 가입	*/
+		INSERT INTO
+					koker_member
+					(
+
+						member_id
+						,member_code
+						,password
+						,use_yn
+						,name
+						,class_code
+						,hp01
+						,hp02
+						,hp03
+						,click_wrap01
+						,click_wrap02
+						,click_wrap03
+						,click_wrap04
+						,insert_date
+						
+					)
+		VALUES
+				(
+
+						#{member_id}
+						,#{member_code}
+						,#{password}
+						,"y"
+						,#{name}
+						,#{class_code}
+						,#{hp01}
+						,#{hp02}
+						,#{hp03}
+						,"y"
+						,"y"
+						,"y"
+						,"y"
+						,now()
+						
+				)
+	</insert>
+	
+		<select id="getMemberInfo" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+		/* 사용자 정보 조회 */
+		SELECT
+						member_no
+						,member_id
+						,member_code
+						,password
+						,use_yn
+						,name
+						,class_code
+						,hp01
+						,hp02
+						,hp03
+						,click_wrap01
+						,click_wrap02
+						,click_wrap03
+						,click_wrap04
+						,insert_date
+						,push_yn
+		FROM
+				koker_member 
+			
+		WHERE 	
+				1=1
+				<if test="member_id != null and member_id != ''">
+				AND member_id = #{member_id}
+				</if>
+				<if test="member_no != null and member_no != ''">
+				AND member_no = #{member_no}
+				</if>
+				<if test="password !=null and password != ''">
+				AND password = #{password}
+				</if>
+				AND 
+					use_yn = "y"
+						
+	</select>
+	
+	
+	<select id="getFindPw" parameterType="map" resultType="String">
+		/*비밀번호찾기*/
+		SELECT
+			password	
+		FROM
+			koker_member
+		WHERE
+			member_id =#{member_id}
+		
+			
+	</select>
+	
+	<update id="updatePw" parameterType="map">
+		/*비밀번호 변경*/
+		UPDATE 
+			koker_member
+		SET
+			password = #{password}
+		WHERE
+			member_id = #{member_id}	
+			
+	</update>
+	
+	<select id="getBusinessKind" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*업체종류로딩*/
+		SELECT
+			 code_no
+			,class_code
+			,category
+			,code_name
+			,code_sort
+		FROM
+			koker_code
+		WHERE
+			class_code=#{class_code}
+		ORDER BY
+			code_sort ASC
+		
+			
+	</select>
+	
+	<select id="getZip_area" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*지역 로딩*/
+		SELECT
+			sido_no
+			,sido
+		FROM
+			zip_sido
+		group by 
+			sido
+		ORDER BY 
+			sido_no ASC 
+		
+			
+	</select>
+	
+	<select id="getZip_city" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*도시 로딩*/
+		SELECT
+			gugun
+		FROM
+			zip_sido
+		WHERE
+			sido=#{sido}
+		group by 
+			gugun
+		ORDER BY 
+			gugun ASC
+	</select>
+	
+	<select id="getZip_cityAll" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*도시 전체로딩*/
+		SELECT 
+			sido_no
+			,sido
+			,gugun
+		FROM
+			zip_sido
+		group by 
+			gugun
+		ORDER BY 
+			sido_no ASC 
+			,gugun ASC
+	</select>
+	
+	<insert id="insertKoker_info" parameterType="map">
+	
+		/*	업체정보 등록 */
+		INSERT INTO
+					koker_info
+					(
+							member_no
+							<if test="class_code != null and class_code != ''">
+							,class_code
+							</if>
+							<if test="koker_name != null and koker_name != ''">
+							,koker_name	
+							</if>
+							<if test="class_code == '03' ">
+							,addr01
+							</if>
+							<if test="call_tel01 != null and call_tel01 != ''">
+							,call_tel01
+							,call_tel02
+							,call_tel03
+							</if>
+							<if test='class_code == "02" or class_code == "04" or class_code == "05" or class_code == "06" or class_code == "07" '>
+							,business_file01_name
+							
+							,business_file01_path
+							</if>
+							<if test="class_code == '05' ">
+							,business_file02_name
+				
+							,business_file02_path
+							</if>		
+							<if test="category != null and category != ''">
+							,category	
+							</if>					
+					)
+		VALUES
+				(
+							 #{member_no}
+							<if test="class_code != null and class_code != ''">
+							,#{class_code}
+							</if>
+							<if test="koker_name != null and koker_name != ''">
+							,#{koker_name}	
+							</if>
+							<if test="class_code == '03' ">
+							,#{addr01}
+							</if>
+							<if test="call_tel01 != null and call_tel01 != ''">
+							,#{call_tel01}
+							,#{call_tel02}
+							,#{call_tel03}
+							</if>
+							<if test='class_code == "02" or class_code == "04" or class_code == "05" or class_code == "06" or class_code == "07"'>
+							,#{business_file01_name}
+							
+							,#{business_file01_path}
+							</if>
+							<if test="class_code == '05' ">
+							,#{business_file02_name}
+						
+							,#{business_file02_path}
+							</if>
+							<if test="category != null and category != ''">
+							,#{category}
+							</if>	
+						
+				)
+	</insert>
+	
+		
+	<insert id="insertKoker_category" parameterType="map">
+	
+		/*	업체정보(카테고리) 등록 */
+		INSERT INTO
+					koker_category
+					(
+							koker_no
+							,class_code
+							<if test=' ca01 != null and ca01 != ""  and ca01 != "n" '>
+							,ca01
+							</if>
+							<if test=' ca02 != null and ca02 != ""  and ca02 != "n" '>
+							,ca02
+							</if>
+							<if test=' ca03 != null and ca03 != ""  and ca03 != "n" '>
+							,ca03
+							</if>
+							<if test=' ca04 != null and ca04 != ""  and ca04 != "n" '>
+							,ca04
+							</if>
+							<if test=' ca05 != null and ca05 != ""  and ca05 != "n" '>
+							,ca05
+							</if>
+							<if test=' ca06 != null and ca06 != ""  and ca06 != "n" '>
+							,ca06
+							</if>
+							<if test=' ca07 != null and ca07 != ""  and ca07 != "n" '>
+							,ca07
+							</if>
+							<if test=' ca08 != null and ca08 != ""  and ca08 != "n" '>
+							,ca08
+							</if>
+							<if test=' ca09 != null and ca09 != ""  and ca09 != "n" '>
+							,ca09
+							</if>
+							<if test=' ca10 != null and ca10 != ""  and ca10 != "n" '>
+							,ca10
+							</if>
+							<if test=' ca11 != null and ca11 != ""  and ca10 != "n" '>
+							,ca11
+							</if>
+							<if test=' ca12 != null and ca12 != ""  and ca12 != "n" '>
+							,ca12
+							</if>
+							<if test=' ca13 != null and ca13 != ""  and ca13 != "n" '>
+							,ca13
+							</if>
+							<if test=' ca14 != null and ca14 != ""  and ca14 != "n" '>
+							,ca14
+							</if>
+							<if test=' ca15 != null and ca15 != ""  and ca15 != "n" '>
+							,ca15
+							</if>
+							<if test=' ca16 != null and ca16 != ""  and ca16 != "n" '>
+							,ca16
+							</if>
+							<if test=' ca17 != null and ca17 != ""  and ca17 != "n" '>
+							,ca17
+							</if>
+							<if test=' ca18 != null and ca18 != ""  and ca18 != "n" '>
+							,ca18
+							</if>
+							<if test=' ca19 != null and ca19 != ""  and ca19 != "n" '>
+							,ca19
+							</if>
+							<if test=' ca20 != null and ca20 != ""  and ca20 != "n" '>
+							,ca20
+							</if>
+							<if test=' ca21 != null and ca21 != ""  and ca21 != "n" '>
+							,ca21
+							</if>
+							<if test=' ca22 != null and ca22 != ""  and ca22 != "n" '>
+							,ca22
+							</if>
+							<if test=' ca23 != null and ca23 != ""  and ca23 != "n" '>
+							,ca23
+							</if>
+							<if test=' ca24 != null and ca24 != ""  and ca24 != "n" '>
+							,ca24
+							</if>
+							<if test=' ca25 != null and ca25 != ""  and ca25 != "n" '>
+							,ca25
+							</if>
+							<if test=' ca26 != null and ca26 != ""  and ca26 != "n" '>
+							,ca26
+							</if>
+							<if test=' ca27 != null and ca27 != ""  and ca27 != "n" '>
+							,ca27
+							</if>
+							<if test=' ca28 != null and ca28 != ""  and ca28 != "n" '>
+							,ca28
+							</if>
+							<if test=' ca29 != null and ca29 != ""  and ca29 != "n" '>
+							,ca29
+							</if>
+							<if test=' ca30 != null and ca30 != ""  and ca30 != "n" '>
+							,ca30
+							</if>
+							<if test=' ca31 != null and ca31 != ""  and ca31 != "n" '>
+							,ca31
+							</if>
+							<if test=' ca32 != null and ca32 != ""  and ca32 != "n" '>
+							,ca32
+							</if>
+							<if test=' ca33 != null and ca33 != ""  and ca33 != "n" '>
+							,ca33
+							</if>
+							<if test=' ca34 != null and ca34 != ""  and ca34 != "n" '>
+							,ca34
+							</if>
+							<if test=' ca35 != null and ca35 != ""  and ca35 != "n" '>
+							,ca35
+							</if>
+							<if test=' ca36 != null and ca36 != ""  and ca36 != "n" '>
+							,ca36
+							</if>
+							<if test=' ca37 != null and ca37 != ""  and ca37 != "n" '>
+							,ca37
+							</if>
+							<if test=' ca38 != null and ca38 != ""  and ca38 != "n" '>
+							,ca38
+							</if>
+							<if test=' ca39 != null and ca39 != ""  and ca39 != "n" '>
+							,ca39
+							</if>
+							<if test=' ca40 != null and ca40 != ""  and ca40 != "n" '>
+							,ca40
+							</if>
+							
+							
+
+
+												
+					)
+		VALUES
+				(
+
+							#{koker_no}
+							,#{class_code}
+							<if test=' ca01 != null and ca01 != ""  and ca01 != "n" '>
+							,#{ca01}
+							</if>
+							<if test=' ca02 != null and ca02 != ""  and ca02 != "n" '>
+							,#{ca02}
+							</if>
+							<if test=' ca03 != null and ca03 != ""  and ca03 != "n" '>
+							,#{ca03}
+							</if>
+							<if test=' ca04 != null and ca04 != ""  and ca04 != "n" '>
+							,#{ca04}
+							</if>
+							<if test=' ca05 != null and ca05 != ""  and ca05 != "n" '>
+							,#{ca05}
+							</if>
+							<if test=' ca06 != null and ca06 != ""  and ca06 != "n" '>
+							,#{ca06}
+							</if>
+							<if test=' ca07 != null and ca07 != ""  and ca07 != "n" '>
+							,#{ca07}
+							</if>
+							<if test=' ca08 != null and ca08 != ""  and ca08 != "n" '>
+							,#{ca08}
+							</if>
+							<if test=' ca09 != null and ca09 != ""  and ca09 != "n" '>
+							,#{ca09}
+							</if>
+							<if test=' ca10 != null and ca10 != ""  and ca10 != "n" '>
+							,#{ca10}
+							</if>
+							<if test=' ca11 != null and ca11 != ""  and ca10 != "n" '>
+							,#{ca11}
+							</if>
+							<if test=' ca12 != null and ca12 != ""  and ca12 != "n" '>
+							,#{ca12}
+							</if>
+							<if test=' ca13 != null and ca13 != ""  and ca13 != "n" '>
+							,#{ca13}
+							</if>
+							<if test=' ca14 != null and ca14 != ""  and ca14 != "n" '>
+							,#{ca14}
+							
+							</if>
+							<if test=' ca15 != null and ca15 != ""  and ca15 != "n" '>
+							,#{ca15}
+							</if>
+							<if test=' ca16 != null and ca16 != ""  and ca16 != "n" '>
+							,#{ca16}
+							</if>
+							<if test=' ca17 != null and ca17 != ""  and ca17 != "n" '>
+							,#{ca17}
+							</if>
+							<if test=' ca18 != null and ca18 != ""  and ca18 != "n" '>
+							,#{ca18}
+							</if>
+							<if test=' ca19 != null and ca19 != ""  and ca19 != "n" '>
+							,#{ca19}
+							</if>
+							<if test=' ca20 != null and ca20 != ""  and ca20 != "n" '>
+							,#{ca20}
+							</if>
+							<if test=' ca21 != null and ca21 != ""  and ca21 != "n" '>
+							,#{ca21}
+							</if>
+							<if test=' ca22 != null and ca22 != ""  and ca22 != "n" '>
+							,#{ca22}
+							</if>
+							<if test=' ca23 != null and ca23 != ""  and ca23 != "n" '>
+							,#{ca23}
+							</if>
+							<if test=' ca24 != null and ca24 != ""  and ca24 != "n" '>
+							,#{ca24}
+							</if>
+							<if test=' ca25 != null and ca25 != ""  and ca25 != "n" '>
+							,#{ca25}
+							</if>
+							<if test=' ca26 != null and ca26 != ""  and ca26 != "n" '>
+							,#{ca26}
+							</if>
+							<if test=' ca27 != null and ca27 != ""  and ca27 != "n" '>
+							,#{ca27}
+							</if>
+							<if test=' ca28 != null and ca28 != ""  and ca28 != "n" '>
+							,#{ca28}
+							</if>
+							<if test=' ca29 != null and ca29 != ""  and ca29 != "n" '>
+							,#{ca29}
+							</if>
+							<if test=' ca30 != null and ca30 != ""  and ca30 != "n" '>
+							,#{ca30}
+							</if>
+							<if test=' ca31 != null and ca31 != ""  and ca31 != "n" '>
+							,#{ca31}
+							</if>
+							<if test=' ca32 != null and ca32 != ""  and ca32 != "n" '>
+							,#{ca32}
+							</if>
+							<if test=' ca33 != null and ca33 != ""  and ca33 != "n" '>
+							,#{ca33}
+							</if>
+							<if test=' ca34 != null and ca34 != ""  and ca34 != "n" '>
+							,#{ca34}
+							</if>
+							<if test=' ca35 != null and ca35 != ""  and ca35 != "n" '>
+							,#{ca35}
+							</if>
+							<if test=' ca36 != null and ca36 != ""  and ca36 != "n" '>
+							,#{ca36}
+							</if>
+							<if test=' ca37 != null and ca37 != ""  and ca37 != "n" '>
+							,#{ca37}
+							</if>
+							<if test=' ca38 != null and ca38 != ""  and ca38 != "n" '>
+							,#{ca38}
+							</if>
+							<if test=' ca39 != null and ca39 != ""  and ca39 != "n" '>
+							,#{ca39}
+							</if>
+							<if test=' ca40 != null and ca40 != ""  and ca40 != "n" '>
+							,#{ca40}
+							</if>
+							
+						
+				)
+	</insert>
+	
+		<select id="getMember_no" parameterType="map"  resultType="String">
+		/* 회원번호 조회*/
+		SELECT
+			member_no
+		FROM
+			koker_member
+		WHERE
+		    member_id = #{member_id}
+		
+			
+	</select>
+	
+	<select id="getKoker_no" parameterType="map"  resultType="String">
+		/* 업체번호 조회*/
+		SELECT
+			koker_no
+		FROM
+			koker_info
+		WHERE
+		    member_no = #{member_no} 
+		<if test="class_code != null and class_code != ''">
+			AND  class_code = #{class_code}	
+		</if>
+			
+	</select>
+	
+		<select id="getKoker_name" parameterType="map"  resultType="String">
+		/* 업체명 조회*/
+		SELECT
+			koker_name
+		FROM
+			koker_info
+		WHERE
+		    member_no = #{member_no} 
+		<if test="class_code != null and class_code != ''">
+			AND  class_code = #{class_code}	
+		</if>
+			
+	</select>
+		
+	<update id="updateWork_state" parameterType="map">
+		/*기술자상태 변경*/
+		UPDATE 
+			koker_info
+		SET
+			work_state = IF(work_state='n','y','n')
+		WHERE
+		    member_no = #{member_no} 
+		AND   
+			class_code = #{class_code}	
+	</update>
+	
+
+	
+	<select id="getWork_state" parameterType="map"  resultType="String">
+		/* 기술자 상태 조회*/
+		SELECT
+			work_state
+		FROM
+			koker_info
+		WHERE
+		    member_no = #{member_no} 
+		AND   
+			class_code = #{class_code}	
+	</select>
+	
+	<update id="updateKoker_state" parameterType="map">
+		/*기술자상태 변경*/
+		UPDATE 
+			koker_state
+		SET
+			state = IF(state='1','0','1')
+		WHERE
+		     koker_no = (select koker_no from koker_info where member_no = #{member_no})
+	</update>
+	
+	<select id="getKoker_state" parameterType="map"  resultType="String">
+		/* 기술자 상태 조회*/
+		SELECT
+			state
+		FROM
+			koker_state
+		WHERE
+		    koker_no = (select koker_no from koker_info where member_no = #{member_no})
+	</select>
+	<select id="getCompanyInfo" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/* 업체정보 조회*/
+		SELECT
+			i.koker_no
+			,member_no
+			,class_code
+			,category
+			,koker_name
+			,zip_code
+			,addr01
+			,addr02
+			,call_tel01
+			,call_tel02
+			,call_tel03
+			,holiday
+			,call_stime
+			,call_ntime
+			,koker_title
+			,koker_content
+			,koker_url
+			,logo_name
+			,logo_fake_name
+			,logo_path
+			,file01_name
+			,file01_fake_name
+			,file01_path
+			,file02_name
+			,file02_fake_name
+			,file02_path
+			,file03_name
+			,file03_fake_name
+			,file03_path
+			,latitude			
+			,business_file01_name
+			,business_file01_path
+			,business_file02_name
+			,business_file02_path
+			,koker_auth
+			,s.state
+
+		FROM
+			koker_info i
+		LEFT JOIN
+		 koker_state s 
+		ON 
+		 i.koker_no = s.koker_no 	
+		WHERE
+		    member_no = #{member_no} 
+		AND   
+			class_code = #{class_code}	
+			
+	</select>
+	
+	
+	<update id="doMemberLeave" parameterType="map">
+	/*	회원탈퇴	*/
+
+		UPDATE 
+			koker_member
+		SET
+			use_yn = "n"
+			,member_code = "03"
+			,delete_date = NOW()
+		WHERE
+			member_no = #{member_no}
+	</update>
+	
+	
+	<update id="updateCompanyInfo" parameterType="map">
+	/*	업체정보수정	*/
+
+		UPDATE 
+			koker_info
+		SET
+			 call_stime = #{call_stime}
+		 <if test="call_ntime != null and call_ntime != ''">
+		 	,call_ntime = #{call_ntime}
+		 </if>
+		 <if test="holiday != null">
+		 	,holiday = #{holiday}
+		 </if>
+		 <if test="koker_url != null">
+			 ,koker_url = #{koker_url}
+		 </if>
+		  <if test="koker_name != null">
+		 	,koker_name = #{koker_name}
+		 </if>
+		 <if test="koker_content != null">
+		 	,koker_content = #{koker_content}
+		 </if>
+		 <if test="logo_name != null and logo_name != ''">
+			 ,logo_name = #{logo_name}
+		 </if>
+		 <if test="logo_path != null and logo_path != ''">
+			 ,logo_path = #{logo_path}
+		 </if>
+		 <if test="file01_name != null and file01_name != ''">
+			 ,file01_name = #{file01_name}
+		 </if>
+		 <if test="file01_path != null and file01_path != ''">
+			 ,file01_path = #{file01_path}
+		 </if>
+		 <if test="file02_name != null and file02_name != ''">
+		 	,file02_name = #{file02_name}
+		 </if>
+		 <if test="file02_path != null and file02_path != ''">
+			 ,file02_path = #{file02_path}
+		 </if>
+		 <if test="file03_name != null and file03_name != ''">
+		 	,file03_name = #{file03_name}
+		 </if>
+		 <if test="file03_path != null and file03_path != ''">
+		 	,file03_path = #{file03_path}
+		 </if>
+		 <if test="file03_path != null and file03_path != ''">
+		 	,file03_path = #{file03_path}
+		 </if>
+		 <if test="call_tel01 != null and call_tel01 != ''">
+		 	,call_tel01 = #{call_tel01}
+		 </if>
+		<if test="call_tel02 != null and call_tel02 != ''">
+		 	,call_tel02 = #{call_tel02}
+		 </if>
+		<if test="call_tel03 != null and call_tel03 != ''">
+		 	,call_tel03 = #{call_tel03}
+		 </if>
+		WHERE
+			member_no = #{member_no}
+	</update>
+	
+	<update id="update_hpregid" parameterType="map">
+	/* 핸드폰id 바꿈*/
+		UPDATE
+			koker_member
+		SET
+			hp_reg_id = #{hp_reg_id},
+			hp_kind = "A"
+		WHERE
+			member_id = #{member_id}
+	</update>
+	
+	<update id="update_ioshpregid" parameterType="map">
+	/* ios 핸드폰id 바꿈*/
+		UPDATE
+			koker_member
+		SET
+			hp_reg_id = #{hp_reg_id},
+			hp_kind = "I"
+		WHERE
+			member_id = #{member_id}
+	</update>
+	
+	<insert id="insertKoker_state" parameterType="map">
+	
+		/*	업체정보(상태) 등록 */
+		INSERT INTO
+			koker_state
+			(
+				koker_no
+				,state								
+			)
+		VALUES
+			(
+				#{koker_no}
+			   ,'1'	
+			)
+	</insert>
+	
+	<insert id="insertKoker_state_null" parameterType="map">
+		/*	업체정보(상태) 등록 */
+		INSERT INTO
+			koker_state
+			(
+				koker_no
+				,state								
+			)
+		VALUES
+			(
+				(select koker_no from koker_info where member_no = #{member_no})
+			   ,'0'	
+			)
+	</insert>
+	
+	
+		
+	<update id="updateCompanyMember" parameterType="map">
+	/*	회원정보수정	*/
+		UPDATE 
+			koker_member
+		SET
+			 hp01 = #{hp01}
+		 <if test="hp02 != null and hp02 != ''">
+			 ,hp02 = #{hp02}
+		 </if>
+		 <if test="hp03 != null and hp03 != ''">
+			 ,hp03 = #{hp03}
+		 </if>
+		 <if test="password_new != null and password_new != ''">
+			 ,password = #{password_new}
+		 </if>
+		WHERE
+			member_no = #{member_no}
+	</update>
+		
+	<select id="getPassword" parameterType="map"  resultType="String">
+		/* 비밀번호 조회*/
+		SELECT
+			password
+		FROM
+			koker_member
+		WHERE
+		    member_no = #{member_no}
+	</select>
+	
+	<update id="delCompanyFile" parameterType="map">
+	/*	이미지삭제	*/
+
+		UPDATE 
+			koker_info
+		SET
+			member_no = #{member_no}
+		 <if test='file_no == "logo" '>
+			,logo_name = ""
+			,logo_fake_name = ""
+			,logo_path = ""
+		</if>	
+		<if test='file_no == "file01" '>
+			,file01_name = ""
+			,file01_fake_name = ""
+			,file01_path = ""
+		</if>		
+		<if test='file_no == "file02" '>
+			,file02_name = ""
+			,file02_fake_name = ""
+			,file02_path = ""
+		</if>	
+		<if test='file_no == "file03" '>
+			,file03_name = ""
+			,file03_fake_name = ""
+			,file03_path = ""
+		</if>	
+		WHERE
+			member_no = #{member_no}
+	</update>
+	
+	
+</mapper>

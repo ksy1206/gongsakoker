@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="addCompany">
+
+	<insert id="insertAddCompany" parameterType="gongsakoker.vo.AddCompanyVO">
+		INSERT INTO 
+			koker_addCompany(
+				company_name,
+				company_addr,
+				company_tel,
+				company_reason,
+				member_no,
+				company_recommender,
+				company_call_ok
+				) 
+			VALUE(
+				#{company_name}, 
+				#{company_addr}, 
+				#{company_tel},
+				#{company_reason},
+				#{member_no},
+				#{company_recommender},
+				"n"
+				)
+	
+	</insert>
+	
+
+
+</mapper>

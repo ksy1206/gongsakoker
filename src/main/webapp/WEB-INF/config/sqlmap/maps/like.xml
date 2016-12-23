@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="like">
+
+
+	
+	<select id="getLikeList" parameterType="map"  resultType="gongsakoker.vo.MemberVO">
+		/*나의콕 리스트*/
+		SELECT 
+		b.bookmark_no
+		,b.member_no
+		,b.koker_no
+		,i.koker_name
+		,i.class_code
+		,i.logo_path
+		,i.logo_name
+		,i.koker_title
+		,i.addr01
+		,i.addr02
+		,i.call_tel01
+		,i.call_tel02
+		,i.call_tel03
+		,i.koker_auth
+		,(SELECT 
+			COUNT(*) 
+		FROM 
+			koker_review 
+		WHERE 
+			koker_no = b.koker_no 
+		GROUP BY 
+			koker_no) AS review_count
+		,(SELECT 
+			ROUND(AVG(review),1) 
+		FROM 
+			koker_review 
+		WHERE 
+			koker_no = b.koker_no 
+		GROUP BY 
+			koker_no) AS review_avg
+		,(SELECT 
+			member_id 
+		FROM 
+			koker_member 
+		WHERE 
+			member_no = i.member_no 
+		) AS member_id	
+		, IFNULL(e.ranking, '0') AS ranking
+		, IFNULL(f.state, '0') AS state
+		, IFNULL(h.special_no, '0') AS special_no	
+		, c.charge_yn AS charge_yn
+		, biz.vn		
+	FROM 
+		koker_bookmark AS b
+				
+	LEFT OUTER JOIN 
+		koker_info AS i
+	ON 
+		b.koker_no = i.koker_no
+		
+	LEFT OUTER JOIN 
+		koker_review AS r
+	ON 
+		b.koker_no = r.koker_no	
+	LEFT OUTER JOIN 
+		koker_rank e
+		on 
+		i.koker_no = e.koker_no
+		and 
+		i.class_code = e.class_code
+	LEFT OUTER JOIN 
+		koker_state f
+		on 
+		i.koker_no = f.koker_no
+	LEFT OUTER JOIN 
+		koker_special h
+		on 
+		i.koker_no = h.koker_no	
+	LEFT OUTER JOIN 
+		koker_member m
+		ON 
+		i.member_no = m.member_no	
+	LEFT OUTER JOIN 
+		koker_charge_member AS c
+	ON 
+		b.koker_no = c.koker_no		
+	LEFT OUTER JOIN 
+		bizlink AS biz
+	ON 
+		b.koker_no = biz.koker_no				
+	 WHERE 
+		b.member_no = #{member_no}
+		AND 
+		m.use_yn = 'y'
+	GROUP BY
+		b.koker_no	
+			
+	</select>
+	
+	<delete id="deleteBookMark" parameterType="map">
+	/*	나의콕 삭제	*/
+	DELETE 
+	FROM
+			koker_bookmark
+	WHERE 
+			member_no = #{member_no}
+	AND
+			koker_no = #{koker_no}
+	</delete>
+	
+	<insert id="insertBookMark" parameterType="map">
+	/*	나의콕 등록	*/
+	INSERT INTO
+		koker_bookmark
+		(
+			member_no,
+			koker_no
+		)
+	VALUES
+		(
+			#{member_no},
+			#{koker_no}
+		)	
+	</insert>
+	
+</mapper>

@@ -1,0 +1,169 @@
+@charset "utf-8";
+/* css document */
+
+@font-face {
+    font-family:'GodoM';
+    src: url('fonts/GodoM.eot');
+    src: url('fonts/GodoM.eot?#iefix') format('embedded-opentype'),
+         url('fonts/GodoM.woff') format('woff'),
+         url('fonts/GodoM.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}  
+
+* {font-family:"GodoM";margin:0;}
+
+
+
+body {margin:0;}
+.wrapper {width:100%;margin:0;}
+
+#header {width:100%;height:50px;margin:0 auto;background-color:#29a9c8;}
+	#header .kokerlogo {float:left;margin: .2% 1%;}
+	#header ul {float:right;margin: .8%;font-size:10.5pt;}
+	#header li {float:left;margin-left:50px;}
+	#header ul img {margin: -.9%;}
+	#header a {text-decoration:none;color:#fff;}
+	#header a:hover {color:#fff;}
+	#header a:visited {color:#fff;}
+	
+.main {width:980px;margin:0 auto 200px auto;}
+	.title {margin:80px 40%;font-weight:lighter;}
+	.title h1 {float:left;color:#29a9c8;margin-right:10px;}
+	.title p {font-family:"나눔바른고딕";padding-top:4px;}
+	.login_box {margin:70px auto 30px auto;border-bottom:1px solid #8f8f8f;padding-bottom:30px;}
+	.login_idpw {width:70%;margin:0 auto;}
+	.login_idpw input[type=id] {
+		padding:1em 2em;
+		border:2px #29a9c8 solid;
+		width:70%;
+		margin:10px 10%;
+		border-radius:20px;
+		font-size:10pt;
+		outline:none;
+		font-family:"나눔바른고딕";
+	}
+	.login_idpw input[type=password] {
+		padding:1em 2em;
+		border:2px #29a9c8 solid;
+		width:70%;
+		margin:10px 10%;
+		border-radius:20px;
+		font-size:10pt;
+		outline:none;
+		font-family:"나눔바른고딕";
+	}
+	.login_idpw button {
+		padding:.5em 2em;
+		border:2px #29a9c8 solid;
+		background-color:#29a9c8;
+		width:78%;
+		margin:10px 10%;
+		border-radius:18px;
+		font-size:13pt;
+		color:#fff;
+		outline:none;
+		cursor:pointer;
+	}
+	.login_idpw div {
+		margin:0 41%;
+	}
+	.login_idpw input[type=checkbox] {
+		display:block;
+		float:left;
+		margin-right:10px;
+		margin-top:5px;
+	}
+	.login_idpw label {
+		display:block;
+		font-family:"나눔바른고딕";
+		color:#636363;
+	}
+	.login_sub {
+		width:30%;
+		margin:0 33%;
+	}
+	.login_sub span {
+		margin:0 20px;
+		font-size:12pt;
+		color:#8f8f8f;
+	}
+	.login_sub span a {
+		color:#8f8f8f;
+		text-decoration:none;
+		font-weight:lighter;
+	}
+	input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+		display:none;
+		-webkit-appearance:none;
+		margin:0;
+	}
+	input-spin-button {
+		display:none;
+	}
+	
+
+
+@media (min-width: 800px){
+	.header{height: 60%;}	
+}
+@media only screen and (min-width: 769px) and (max-width:960px) {
+	#header {width:100%;margin:0;}
+	.main {width:100%;margin:0 auto 100px auto;}
+		.title {margin:100px 40%;}
+		.login_box {margin:100px  auto 40px auto;}
+}
+@media screen and (max-width: 768px) {
+	.header {height: 20%;}
+}
+@media only screen and (min-width:600px) and (max-width:768px) {
+	.wrapper {width:100%;min-height:100%;}
+	#header {width:100%;margin:0;}
+	.main {width:100%;margin:0 auto 100px auto;}
+		.title {margin:50px 38%;}
+		.login_box {margin:50px  auto 40px auto;}
+		.login_idpw div {margin:0 40%;}
+		.login_idpw button {width:81%;}
+		.login_sub {width:37%;margin:0 29%;}
+}
+@media only screen and (min-width:414px) and (max-width:599px) {
+	.wrapper {width:100%;min-height:100%;}
+	#header {width:100%;margin:0;}
+	.main {width:100%;margin:0 auto 100px auto;}
+		.title {margin:50px 38%;}
+		.login_box {margin:50px  auto 40px auto;}
+		.login_idpw {margin:0 13%;}
+		.login_idpw div {margin:0 33%;}
+		.login_idpw input[type=id] {margin:10px 7%;}
+		.login_idpw input[type=password] {margin:10px 7%;}
+		.login_idpw button{width:90%;margin:10px 7.5%;}
+		.login_sub {width:70%;margin:0 17%;}
+}
+@media only screen and (min-width:375px) and (max-width:413px) {
+		.wrapper {width:100%;min-height:100%;}
+	#header {width:100%;margin:0;}
+	.main {width:100%;margin:0 auto 100px auto;}
+		.title {margin:50px 38%;}
+		.login_box {margin:50px  auto 40px auto;}
+		.login_idpw {margin:0 13%;}
+		.login_idpw div {margin:0 31%;}
+		.login_idpw input[type=id] {margin:10px 7%;}
+		.login_idpw input[type=password] {margin:10px 7%;}
+		.login_idpw button{width:92%;margin:10px 7%;}
+		.login_sub {width:76%;margin:0 13%;}
+}
+@media only screen and (min-width:320px) and (max-width:374px) {
+		.wrapper {width:100%;min-height:100%;}
+	#header {width:100%;margin:0;}
+	.main {width:100%;margin:0 auto 100px auto;}
+		.title {margin:50px 36%;}
+		.login_box {margin:50px  auto 40px auto;}
+		.login_idpw {margin:0 13%;}
+		.login_idpw div {margin:0 28%;}
+		.login_idpw input[type=id] {width:81%;margin:10px 2%;}
+		.login_idpw input[type=password] {margin:10px 3%;width:80%;}
+		.login_idpw button{width:104%;margin:10px 2%;}
+		.login_sub {width:70%;margin:0 15%;}
+		.login_sub span {margin:0 10px;}
+}
+

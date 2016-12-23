@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fieldStory">
+        
+	<select id="getFieldStory" parameterType="gongsakoker.vo.FieldStoryVO" resultType="gongsakoker.vo.FieldStoryVO">
+		SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.use_yn
+			, a.img01realName
+			, a.img02realName
+			, a.img03realName
+			, IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+			, b.koker_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		<where>
+		    use_yn="y"
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				and sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="title != 'default' and title != '' and title != null">
+				and a.title like CONCAT('%', #{title}, '%')
+			</if>
+<!-- 			<if test="member_no != 'default' and member_no != '' and member_no != null"> -->
+<!-- 			    and a.member_no = #{member_no} -->
+<!-- 			</if> -->
+<!-- 			<if test="search_content != 'default' and search_content != '' and search_content != null"> -->
+<!-- 				<if test="search_choice == 0"> -->
+<!-- 				    and a.title like CONCAT('%', #{search_content}, '%') -->
+<!-- 				    or -->
+<!-- 				    a.content like CONCAT('%', #{search_content}, '%') -->
+<!-- 				</if> -->
+<!-- 				<if test="search_choice == 1"> -->
+<!-- 				 	and a.title like CONCAT('%', #{search_content}, '%') -->
+<!-- 				</if> -->
+<!-- 				<if test="search_choice == 2"> -->
+<!-- 				    and a.member_id like CONCAT('%', #{search_content}, '%') -->
+<!-- 				</if> -->
+<!-- 			</if> -->
+		</where>
+		<if test="list_select == 'new'">
+			ORDER BY a.insertDate DESC
+		</if>
+		<if test="list_select == 'comment'">
+			ORDER BY answer_count DESC
+		</if>
+		<if test="list_select == 'recommend'">
+			ORDER BY recommend_count DESC
+		</if>
+	</select>
+	
+	<insert id="insertFieldStory" parameterType="gongsakoker.vo.FieldStoryVO">
+	    INSERT INTO
+	    	koker_fieldstory
+	    		(
+	    			member_no
+					, member_id
+					, sido
+					, gugun
+					, title
+					, content
+					, insertDate
+					, img01
+					, img02
+					, img03
+					, img_path
+					, use_yn
+					, img01realName
+					, img02realName
+					, img03realName
+	    		)
+	    	VALUES
+	    		(
+	    			#{member_no}
+					, #{member_id}
+					, #{sido}
+					, #{gugun}
+					, #{title}
+					, #{content}
+					, #{insertDate}
+					, #{img01}
+					, #{img02}
+					, #{img03}
+					, #{img_path}
+					, 'y'
+					, #{img01realName}
+					, #{img02realName}
+					, #{img03realName}
+	    		)	    	
+	</insert>
+	
+	<select id="fieldStoryVo_select" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+	    SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.img01realName
+			, a.img02realName
+			, a.img03realName
+			, a.use_yn
+			, IFNULL(( SELECT COUNT(ans_no) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+			, b.koker_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		WHERE
+			a.fs_no = #{fs_no}
+			AND
+			use_yn = "y";
+	    
+	</select>
+	
+	<select id="fieldStory_answer_list" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+		SELECT
+	    	a.ans_no
+	    	, a.fs_no
+	    	, a.member_no
+	    	, a.member_id
+	    	, a.ans_content
+	    	, a.ans_insertDate
+	    	, b.logo_name
+	    	, b.koker_name
+	    FROM
+	    	koker_fieldstory_answer a
+		INNER JOIN
+		koker_info b
+			ON a.member_no = b.member_no
+	    WHERE
+	    	fs_no = #{fs_no}
+	    ORDER BY ans_insertDate DESC
+	    LIMIT 
+	    	#{startNum}
+	    	,#{endNum}
+	</select>
+	
+	<insert id="fieldStory_answer" parameterType="map">
+	     INSERT INTO
+	    	koker_fieldstory_answer
+	    		(
+	    			fs_no
+	    			, member_no
+	    			, member_id
+	    			, ans_content
+	    			, ans_insertDate
+	    		)
+	    	VALUES
+	    		(
+	    			#{fs_no}
+	    			, #{member_no}
+	    			, #{member_id}
+	    			, #{ans_content}
+	    			, #{ans_insertDate}
+	    		)	    	
+	</insert>
+	
+	<update id="updateFieldStory_answer" parameterType="map">
+	    UPDATE
+	    	koker_fieldstory_answer
+	    SET
+	    	ans_content = #{ans_content}
+	    WHERE
+	    	ans_no = #{ans_no}
+	</update>
+	
+	<update id="updateFieldStory" parameterType="gongsakoker.vo.FieldStoryVO">
+	    UPDATE
+	    	koker_fieldstory
+	    SET
+	    	sido = #{sido}
+	    	, gugun = #{gugun}
+	    	, title = #{title}
+	    	, content = #{content}
+	    	<if test="img01 != null and img01 != '' ">
+	    	, img01 = #{img01}
+	    	, img01realName = #{img01realName}
+	    	</if>
+	    	<if test="img02 != null and img02 != '' ">
+		    , img02 = #{img02}
+		    , img02realName = #{img02realName}
+	    	</if>
+	    	<if test="img03 != null and img03 != '' ">
+		    , img03 = #{img03}
+		    , img03realName = #{img03realName}
+	    	</if>
+	    WHERE
+	    	fs_no = #{fs_no}
+	</update>
+	
+	<delete id="deleteFieldStory_delete" parameterType="map">
+	    DELETE FROM
+	    	koker_fieldstory_answer
+	    WHERE
+	    	ans_no = #{ans_no}
+	</delete>
+	
+	<update id="deleteFieldStory" parameterType="map">
+	    UPDATE
+	    	koker_fieldstory
+	    SET
+	    	use_yn = 'n'
+	    WHERE
+	    	fs_no = #{fs_no}
+	</update>
+	
+	<select id="check_fieldStory_recommend" parameterType="map" resultType="int">
+	    SELECT
+	    	COUNT(rec_no)
+	    FROM
+	    	koker_fieldstory_recommend
+	    WHERE
+	    	fs_no = #{fs_no}
+	    	and
+	    	member_no = #{member_no}
+	</select>
+	
+	<insert id="insert_fieldStory_recommend" parameterType="map">
+	    INSERT INTO
+	    	koker_fieldstory_recommend
+	    		(
+	    			fs_no
+	    			, member_no
+	    			, member_id
+	    		)
+	    VALUES
+	    		(
+	    			#{fs_no}
+	    			, #{member_no}
+	    			, #{member_id}
+	    		)
+	</insert>
+	
+	<delete id="delete_fieldStory_recommend" parameterType="map">
+	    DELETE FROM
+	    	koker_fieldstory_recommend
+	    WHERE
+	    	fs_no = #{fs_no}
+	    	and
+	    	member_no = #{member_no}
+	    	
+	</delete>
+	
+	<select id="count_fieldStory_recommend" parameterType="map" resultType="int">
+	    SELECT
+			COUNT(rec_no)
+		FROM
+			koker_fieldstory_recommend
+		WHERE
+			fs_no = #{fs_no}
+	</select>
+	
+	<select id="get_myFieldStory" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+	    SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.use_yn
+			, IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+			, b.koker_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		WHERE
+			a.member_no = #{member_no}
+			and
+			use_yn="y"
+		ORDER BY a.insertDate DESC
+	</select>
+	
+	<select id="get_fieldStory_notice_list" resultType="gongsakoker.vo.FieldStoryVO">
+	    SELECT
+	     	c_s_code
+			, c_s_title
+			, c_s_content
+			, c_s_insert_date
+			, c_s_use_yn
+			, admin_name
+		FROM
+			koker_c_s_board
+		WHERE
+			c_s_code = '01'
+			and
+			c_s_use_yn = 'y'
+		ORDER BY c_s_insert_date DESC
+		LIMIT
+			0, 5
+	</select>
+	
+	<insert id="insert_fieldStory_singo" parameterType="map">
+	    INSERT INTO
+	    	koker_report_story
+	    		(
+	    			report_grade
+	    			, report_content
+	    			, report_category
+	    			, report_insert_date
+	    			, member_no
+	    			, fs_no
+	    			, ans_no
+	    			, report_use_yn
+	    		)
+	    VALUES
+	    		(
+	    			#{report_grade}
+	    			, #{report_content}
+	    			, #{report_category}
+	    			, #{report_insert_date}
+	    			, #{member_no}
+	    			, #{fs_no}
+	    			, #{ans_no}
+	    			, 'y'
+	    		)
+	</insert>
+	
+<!--여기가지 앱 아래부터는 웹-->
+	<select id="fieldStory_listCount" resultType="java.lang.Integer" parameterType="map">
+	    SELECT
+			COUNT(*) as count
+		FROM
+			koker_fieldstory a
+		<where>
+		    use_yn="y"
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				and sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="member_no != 'default' and member_no != '' and member_no != null">
+			    and a.member_no = #{member_no}
+			</if>
+			<if test="search_content != 'default' and search_content != '' and search_content != null">
+				<if test="search_choice == 0">
+				    and a.title like CONCAT('%', #{search_content}, '%')
+				    or
+				    a.content like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 1">
+				 	and a.title like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 2">
+				    and a.member_id like CONCAT('%', #{search_content}, '%')
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="fieldStory_webList_data" parameterType="map" resultType="gongsakoker.vo.FieldStoryVO">
+		SELECT
+			a.fs_no
+			, a.member_no
+			, a.member_id
+			, a.sido
+			, a.gugun
+			, a.title
+			, a.content
+			, a.insertDate
+			, a.img01
+			, a.img02
+			, a.img03
+			, a.img_path
+			, a.use_yn
+			, IFNULL(( SELECT IFNULL(COUNT(*), 0) FROM koker_fieldstory_answer WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS answer_count
+			, IFNULL(( SELECT COUNT(rec_no) FROM koker_fieldstory_recommend WHERE fs_no = a.fs_no GROUP BY fs_no), 0) AS recommend_count
+			, b.logo_name
+			, b.koker_name
+		FROM
+			koker_fieldstory a
+		INNER JOIN
+			koker_info b
+			ON a.member_no = b.member_no
+		<where>
+		    use_yn="y"
+		    <if test="sido != 'default' and sido != '' and sido != null">
+				and sido=#{sido}
+			</if>
+			 <if test="gugun != 'default' and gugun != '' and gugun != null">
+				and gugun=#{gugun}
+			</if>
+			<if test="member_no != 'default' and member_no != '' and member_no != null">
+			    and a.member_no = #{member_no}
+			</if>
+			<if test="search_content != 'default' and search_content != '' and search_content != null">
+				<if test="search_choice == 0">
+				    and a.title like CONCAT('%', #{search_content}, '%')
+				    or
+				    a.content like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 1">
+				 	and a.title like CONCAT('%', #{search_content}, '%')
+				</if>
+				<if test="search_choice == 2">
+				    and a.member_id like CONCAT('%', #{search_content}, '%')
+				</if>
+			</if>
+		</where>
+		<if test="list_select == 'new'">
+			ORDER BY a.insertDate DESC
+		</if>
+		<if test="list_select == 'comment'">
+			ORDER BY answer_count DESC
+		</if>
+		<if test="list_select == 'recommend'">
+			ORDER BY recommend_count DESC
+		</if>
+		LIMIT
+			#{startRowNum}
+			, #{endRowNum};  
+	</select>
+	
+	<update id="delImgFile" parameterType="map">
+	/*	견적 이미지삭제	*/
+
+		UPDATE 
+			koker_fieldstory
+		SET
+		<if test='file_no == "img01" '>
+			img01 = ""
+			,img01realName = ""
+		</if>		
+		<if test='file_no == "img02" '>
+			img02 = ""
+			,img02realName = ""
+		</if>	
+		<if test='file_no == "img03" '>
+			img03 = ""
+			,img03realName = ""
+		</if>	
+		WHERE
+			fs_no = #{fs_no}
+	</update>
+
+</mapper>

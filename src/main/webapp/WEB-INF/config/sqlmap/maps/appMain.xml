@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="appMain">
+
+	<update id="updatePush_yn" parameterType="map">
+		/*알람 on/off */
+		UPDATE 
+			koker_member
+		SET
+			push_yn = #{push_yn}
+		WHERE
+			member_no = #{member_no}	
+			
+	</update>
+	<select id="getPush_yn" parameterType="map" resultType="String">
+	  /*알람 정보 */
+		SELECT
+			push_yn
+		FROM	
+			koker_member
+		WHERE
+			member_no = #{member_no}	
+	</select>
+	
+	<select id="getChargeCountDown" parameterType="map" resultType="String">
+	 	 /*유료회원 남은시간 */
+		SELECT
+			TIMESTAMPDIFF(SECOND,NOW(),end_date) as spare_time
+		FROM	
+			koker_charge_member
+		WHERE
+			koker_no = #{koker_no}
+		AND 
+			charge_yn = "y"	
+	</select>
+	
+	<select id="selectKokerList" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+	 	select a.koker_no, a.member_no, a.class_code
+			, a.koker_name, a.addr01, a.addr02
+			, a.call_tel01, a.call_tel02, a.call_tel03 , a.koker_auth
+			, a.logo_name, a.logo_path, a.latitude, a.longitude
+			, c.ca01, c.ca02, c.ca03, c.ca04, c.ca05, c.ca06, c.ca07
+			, c.ca08, c.ca09, c.ca10, c.ca11, c.ca12, c.ca13, c.ca14
+			, c.ca15, c.ca16, c.ca17, c.ca18, c.ca19, c.ca20, c.ca21
+			, c.ca22, c.ca23, c.ca24, c.ca25, c.ca26, c.ca27, c.ca28
+			, c.ca29, c.ca30, c.ca31, c.ca32, c.ca33, c.ca34, c.ca35
+			, c.ca36, c.ca37, c.ca38, c.ca39, c.ca40 , i.vn , z.charge_yn
+			, ifnull(d.review_avg, '0') as review_avg, ifnull(d.review_count, '0') as review_count
+			, ifnull(e.ranking, '0') as ranking, ifnull(g.bookmark_no, '0') as bookmark_no
+			, ifnull(f.state, '0') as state, ifnull(h.special_no, '0') as special_no
+			, b.member_id
+		from koker_info a
+		left join koker_member b
+			on a.member_no = b.member_no
+		left join koker_category c
+			on a.koker_no = c.koker_no
+		left join 
+			(
+			select koker_no 
+				, round(avg(review), 1) as review_avg
+				, count(koker_no) as review_count
+			from koker_review
+			group by koker_no
+			) d
+			on a.koker_no = d.koker_no
+		left join koker_rank e
+			on a.koker_no = e.koker_no
+			and a.class_code = e.class_code
+		left join koker_charge_member z
+			on a.koker_no = z.koker_no
+		left join koker_state f
+			on a.koker_no = f.koker_no
+		left join 
+			(
+			select koker_no, bookmark_no
+			from koker_bookmark
+			<if test="member_no != null and member_no != '' and member_no != 'null' ">
+			where member_no = #{member_no}
+			</if>
+			<if test="member_no == null or member_no == '' or member_no == 'null' ">
+			where member_no = ''
+			</if>
+			) g
+			on a.koker_no = g.koker_no
+		left join koker_special h
+			on a.koker_no = h.koker_no
+		left join bizlink i
+			on a.koker_no = i.koker_no
+		where b.member_code = '01'
+			and b.use_yn = 'y'
+			and a.latitude != ''
+			<if test="class_code != null or class_code != ''">
+			and a.class_code = #{class_code}
+			</if>
+			<if test="category != null or category != ''">
+			and (${category})
+			</if>
+			<if test="chk_code == '01'">
+			
+			</if>
+			<if test="chk_code == '02'">
+			and ranking != '0'
+			</if>
+			<if test="chk_code == '03'">
+			and bookmark_no != '0' 
+			</if>
+	</select> 
+	
+	<select id="selectMapList" parameterType="map" resultType="gongsakoker.vo.MapVO">
+	/* 전체 맵리스트*/
+	 	select a.member_no, a.class_code
+			, b.koker_no, b.koker_name, b.addr01, b.addr02
+			, b.call_tel01, b.call_tel02, b.call_tel03 , b.koker_auth
+			, b.logo_name, b.logo_path, b.latitude, b.longitude
+			, ifnull(c.review_avg, '0') as review_avg, ifnull(c.review_count, '0') as review_count
+			, ifnull(d.ranking, '0') as ranking, ifnull(e.bookmark_no, '0') as bookmark_no
+		from 
+		(select member_no, class_code
+		from koker_member 
+		where member_code = '01'
+			and use_yn = 'y'
+			and class_code not in ('01', '03')) a
+		left join koker_info b
+			on a.member_no = b.member_no
+		left join 
+			(
+			select koker_no 
+				, round(avg(review), 1) as review_avg
+				, count(koker_no) as review_count
+			from koker_review
+			group by koker_no
+			) c
+			on b.koker_no = c.koker_no
+		left join koker_rank d
+			on b.koker_no = d.koker_no
+			and a.class_code = d.class_code
+		left join 
+			(
+			select koker_no, bookmark_no
+			from koker_bookmark
+			<if test="member_no != null or member_no != ''">
+			where member_no = #{member_no}
+			</if>
+			<if test="member_no == null or member_no == ''">
+			where member_no = ''
+			</if>
+			) e
+			on b.koker_no = e.koker_no
+		where b.latitude != ''
+	</select>
+	
+	<select id="selectKokerList03" parameterType="map" resultType="gongsakoker.vo.MemberVO">
+	/* 기술자 */
+	 	select a.koker_no, a.member_no, a.class_code
+			, a.koker_name, a.addr01, a.addr02
+			, a.call_tel01, a.call_tel02, a.call_tel03 , a.koker_auth
+			, a.logo_name, a.logo_path, a.latitude, a.longitude
+			, c.ca01, c.ca02, c.ca03, c.ca04, c.ca05, c.ca06, c.ca07
+			, c.ca08, c.ca09, c.ca10, c.ca11, c.ca12, c.ca13, c.ca14
+			, c.ca15, c.ca16, c.ca17, c.ca18, c.ca19, c.ca20, c.ca21
+			, c.ca22, c.ca23, c.ca24, c.ca25, c.ca26, c.ca27, c.ca28
+			, c.ca29, c.ca30, c.ca31, c.ca32, c.ca33, c.ca34, c.ca35
+			, c.ca36, c.ca37, c.ca38, c.ca39, c.ca40 , z.charge_yn
+			, ifnull(d.review_avg, '0') as review_avg, ifnull(d.review_count, '0') as review_count
+			, ifnull(e.ranking, '0') as ranking, ifnull(g.bookmark_no, '0') as bookmark_no
+			, ifnull(f.state, '0') as state, ifnull(h.special_no, '0') as special_no
+		from koker_info a
+		left join koker_member b
+			on a.member_no = b.member_no
+		left join koker_category c
+			on a.koker_no = c.koker_no
+		left join koker_charge_member z
+			on a.koker_no = z.koker_no
+		left join 
+			(
+			select koker_no 
+				, round(avg(review), 1) as review_avg
+				, count(koker_no) as review_count
+			from koker_review
+			group by koker_no
+			) d
+			on a.koker_no = d.koker_no
+		left join koker_rank e
+			on a.koker_no = e.koker_no
+			and a.class_code = e.class_code
+		left join koker_state f
+			on a.koker_no = f.koker_no
+		left join 
+			(
+			select koker_no, bookmark_no
+			from koker_bookmark
+			<if test="member_no != null or member_no != ''">
+			where member_no = #{member_no}
+			</if>
+			<if test="member_no == null or member_no == ''">
+			where member_no = ''
+			</if>
+			) g
+			on a.koker_no = g.koker_no
+		left join koker_special h
+			on a.koker_no = h.koker_no
+		where b.member_code = '01'
+			and b.use_yn = 'y'
+			and a.addr01 like '%${address}%'
+			<if test="class_code != null or class_code != ''">
+			and a.class_code = #{class_code}
+			</if>
+			<if test="category != null or category != ''">
+			and (${category})
+			</if>
+			<if test="chk_code == '01'">
+			
+			</if>
+			<if test="chk_code == '02'">
+			and ranking != '0'
+			</if>
+			<if test="chk_code == '03'">
+			and bookmark_no != '0' 
+			</if>
+		order by koker_no
+	</select>
+	
+	<select id="categoryList" parameterType="String" resultType="gongsakoker.vo.MemberVO">
+		Select
+			class_code,category,code_name
+		FROM
+			koker_code
+		WHERE
+			class_code = #{class_code}
+		ORDER BY 
+			code_sort ASC
+	</select>
+	
+</mapper>

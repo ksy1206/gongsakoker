@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="event">
+
+		<select id="event_list" resultType="gongsakoker.vo.EventVO">
+			SELECT
+				*
+			FROM
+				koker_event
+			WHERE
+				event_use_yn = "y"
+			ORDER BY
+				event_insert_date desc
+		</select>
+		
+		<select id="event_page" parameterType="map" resultType="gongsakoker.vo.EventVO">
+			SELECT
+				*
+			FROM
+				koker_event
+			where
+				event_no=#{event_no}
+		</select>
+	
+
+
+</mapper>
